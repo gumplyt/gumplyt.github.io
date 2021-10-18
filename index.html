@@ -64,6 +64,35 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-php2" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2021/10/09/php2/" class="article-date">
+  <time datetime="2021-10-09T11:12:05.773Z" itemprop="datePublished">2021-10-09</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>***我的php进程</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br></pre></td><td class="code"><pre><span class="line">php标量数据类型：</span><br><span class="line">1.布尔型</span><br><span class="line">*用于条件判断</span><br><span class="line">2.整型</span><br><span class="line">*整型不能包含空格</span><br><span class="line">没有小数点可正可负</span><br><span class="line">指定格式：十进制，十六进制，八进制</span><br><span class="line">3.浮点型</span><br><span class="line">*带小数点</span><br><span class="line">4.字符串</span><br><span class="line">*数字，浮点型，布尔型用引号也属于字符串</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">php符合数据类型</span><br><span class="line">5.array数组</span><br><span class="line">6.object对象</span><br><span class="line">7.callable 可调用</span><br><span class="line">8.iterrable 可迭代</span><br><span class="line"></span><br><span class="line">php特殊数据类型</span><br><span class="line">9.空值NULL</span><br><span class="line">10.resource 资源</span><br><span class="line"></span><br><span class="line">&lt;?php</span><br><span class="line">$arr = array(</span><br><span class="line">    &#x27;jin&#x27;=&gt;&#x27;博超&#x27;,</span><br><span class="line">    &#x27;bai&#x27;=&gt;&#x27;冬雪&#x27;,</span><br><span class="line">    &#x27;男同&#x27;,</span><br><span class="line"></span><br><span class="line">);</span><br><span class="line">print_r ($arr);//只展示数据</span><br><span class="line">echo &#x27;&lt;hr&gt;&#x27;;</span><br><span class="line">var_dump($arr);//还会展示数据类型如：string</span><br><span class="line">echo&#x27;我的名字叫：&#x27;. $arr[&#x27;jin&#x27;]. &#x27;。她的名字：&#x27;.$arr[&#x27;bai&#x27;]//**.**可以将字符串和变量连接在一起，不断使用可连接多个变量</span><br><span class="line">?&gt;</span><br><span class="line"></span><br><span class="line">php数组循环</span><br><span class="line">1.foreach</span><br><span class="line">&lt;?php</span><br><span class="line">$arr = array(</span><br><span class="line">    &#x27;jin&#x27;=&gt;&#x27;博超&#x27;,</span><br><span class="line">    &#x27;bai&#x27;=&gt;&#x27;冬雪&#x27;,</span><br><span class="line">    &#x27;男同&#x27;,</span><br><span class="line">);</span><br><span class="line">foreach($arr as $v)&#123;//**as**意思是**给与**</span><br><span class="line">    echo $v;//$v是临时变量，指代数组中数据如“‘jin&#x27;=&gt;’博超‘等</span><br><span class="line">    echo &#x27;&lt;hr&gt;&#x27;;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/10/09/php2/" data-id="ckuwm9oia00027wv30lkd9ma5" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-php1" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/2021/10/03/php1/" class="article-date">
@@ -82,7 +111,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://example.com/2021/10/03/php1/" data-id="ckub5iu690000dcv39ys54zbj" class="article-share-link">Share</a>
+      <a data-url="http://example.com/2021/10/03/php1/" data-id="ckuwm9oi000007wv3eyokcx24" class="article-share-link">Share</a>
       
       
     </footer>
@@ -113,7 +142,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://example.com/2021/09/26/%E6%88%91%E7%9A%84%E7%AC%AC%E4%B8%80%E7%AF%87%E5%8D%9A%E5%AE%A2/" data-id="ckub5iu6n0001dcv3c61n5xq7" class="article-share-link">Share</a>
+      <a data-url="http://example.com/2021/09/26/%E6%88%91%E7%9A%84%E7%AC%AC%E4%B8%80%E7%AF%87%E5%8D%9A%E5%AE%A2/" data-id="ckuwm9oi500017wv30k3i1b5k" class="article-share-link">Share</a>
       
       
     </footer>
@@ -152,6 +181,10 @@
     <h3 class="widget-title">Recent Posts</h3>
     <div class="widget">
       <ul>
+        
+          <li>
+            <a href="/2021/10/09/php2/">(no title)</a>
+          </li>
         
           <li>
             <a href="/2021/10/03/php1/">(no title)</a>
