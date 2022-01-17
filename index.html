@@ -64,6 +64,151 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-php5" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2021/12/07/php5/" class="article-date">
+  <time datetime="2021-12-07T07:26:27.715Z" itemprop="datePublished">2021-12-07</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="web1"><a href="#web1" class="headerlink" title="web1"></a>web1</h1><h3 id="1-1，信息收集"><a href="#1-1，信息收集" class="headerlink" title="1.1，信息收集"></a>1.1，信息收集</h3><p>面对任何一个问题，尽全力去熟悉他们我们才有可能更好的解决他们，这个熟悉的过程就是信息收集，其中就包括查看源代码。</p>
+<p>方法： </p>
+<p>右键查看源代码 </p>
+<p> F12打开开发者⼯具 </p>
+<p> Ctrl+U 查看 </p>
+<p> Burp 抓包查看 </p>
+<p> 从js代码中获取flflag </p>
+<p> 后续补充 </p>
+<h3 id="1-2，扫目录"><a href="#1-2，扫目录" class="headerlink" title="1.2，扫目录"></a>1.2，扫目录</h3><p>1.2.1目录扫描的意义就是在于发现网站的<a target="_blank" rel="noopener" href="https://www.isolves.com/it/cxkf/kj/">框架</a>信息，比如后台、编辑器等目录信息。</p>
+<p>它的原理就是利用不断地发送http请求，然后对返回的状态码进行判断，来寻找存在的网页、目录、文件，为后面的渗透测试作进一步的准备。</p>
+<p>1.2.2常用工具有： </p>
+<p>扫描⼯具有 dirsearch-master ,御剑等。</p>
+<p>1.2.3常见目录：</p>
+<p> robots 协议 </p>
+<ul>
+<li><p>访问 <a target="_blank" rel="noopener" href="http://www.example.com/robots.txt%EF%BC%8C%E8%BF%99%E4%B8%AA%E6%96%87%E4%BB%B6%E4%BC%9A%E5%91%8A%E8%AF%89%E6%88%91%E4%BB%AC%E5%93%AA%E4%BA%9B%E6%96%87%E4%BB%B6%E5%8F%AF%E4%BB%A5%E7%88%AC%EF%BC%8C%E5%93%AA%E4%BA%9B%E6%96%87%E4%BB%B6%E4%B8%8D%E5%8F%AF%E4%BB%A5%E7%94%A8%E4%BD%9C%E7%88%AC%E8%99%AB%EF%BC%8C%E4%BD%86%E5%9C%A8">http://www.example.com/robots.txt，这个文件会告诉我们哪些文件可以爬，哪些文件不可以用作爬虫，但在</a> ctf 题目中，常用来提示题目有关的重要文件相关题⽬: cftshow-web04 </p>
+</li>
+<li><p>install 安装⽬录相关题⽬: </p>
+<p> <code>ctfshow-web385</code>,install 目录会提示安装有关操作对文件进行修改</p>
+<h3 id="1-3源码泄露"><a href="#1-3源码泄露" class="headerlink" title="1.3源码泄露"></a>1.3源码泄露</h3><p>1.3.1git 泄漏 </p>
+<ul>
+<li><p>开发者在使用 git 作为版本控制时，在一个目录中初始化一个仓库以后 , 会在这个目录下产生一个名叫 <code>.git</code> 的隐藏文件夹，这个文件夹里面保存了这个仓库的所有版本等一系列信息。</p>
+</li>
+<li><p>如果服务器将<code>.git</code>文件夹放在了 web 目录下，就可能导致攻击者利用<code>.git</code>文件夹内的信息获取应用程序所有源代码。</p>
+</li>
+</ul>
+<p>修复建议：</p>
+<p> 删除网站目录下的<code>.git</code>文件</p>
+<p>中间件上设置<code>.git</code>目录访问权限，禁止访问</p>
+<p>相关题目：ctfshow-web7  </p>
+<p>buun1book [第一章 web 入门]粗心的小李</p>
+</li>
+</ul>
+<p>1.3.2svn 泄漏 </p>
+<p>漏洞描述: </p>
+<ul>
+<li><p>使用<code>svn</code>管理本地文件代码的过程，会自动生成一个<code>.svn</code>的文件夹—包含这网站的重要信息</p>
+</li>
+<li><p>如果网站管理员在发布网站的时候，没有使用到处功能，而是直接复制微网站后台的文件夹，</p>
+</li>
+</ul>
+<p>就会导致<code>.svn</code>文件暴露在外网环境</p>
+<ul>
+<li>黑客可以借助其中包含的用于版本信息追踪的<code>entries</code>文件，获取站点信息</li>
+</ul>
+<p>修复建议</p>
+<p>查找服务器上所有.svn 隐藏文件夹，删除。</p>
+<p> 开发人员在使用 SVN 时，严格使用导出功能，禁止直接复制代码。</p>
+<p>相关题目：ctfshow-web8 </p>
+<p>1.3.3 HG 泄露</p>
+<p>⽂件恢复 (Vim 临时⽂件缓存) </p>
+<p>有时候扫⽬录会出现 .filename.swp ,这就是在 vim 编辑 fifilename 时意外退出⽽产⽣的恢复⽂件 </p>
+<p>恢复⽂件的命令 </p>
+<p> vi -r .filename.swp </p>
+<p>相关题目：ctfshow-web9 </p>
+<p>1.3.4 phps 泄漏 </p>
+<p>访问相关⽂件的 phps 后缀名 </p>
+<p>相关题⽬:</p>
+<p>就是php的 源代码文件，通常用于提供给用户（访问者）查看php代码，因为用户无法直接通过</p>
+<p>Web浏览器看到php文件的内容，所以需要用phps文件代替。其实，只要不用php等已经在服务器</p>
+<p>中注册过的MIME类型为文件即可，但为了国际通用，所以才用了phps文件类型。</p>
+<p>它的MIME类型为：text/html, application/x-httpd-php-source, application/ </p>
+<p>x-httpd-php3-source。 </p>
+<p>相关题目：ctfshow-web05</p>
+<h3 id="1-4-收集域名信息"><a href="#1-4-收集域名信息" class="headerlink" title="1.4 收集域名信息"></a>1.4 收集域名信息</h3><p>获取域名注册信息：该域名DNS服务器信息、注册⼈联系信息 </p>
+<p>Whois 查询：查询域名是否已被注册以及已被注册域名的详细信息（域名所有⼈、 域名注册商等） </p>
+<p>在线⼯具： </p>
+<p>站⻓之家 <a target="_blank" rel="noopener" href="http://whois.chinaz.com/">http://whois.chinaz.com/</a> </p>
+<p>Virus Total <a target="_blank" rel="noopener" href="https://www.virustotal.com/gui/">https://www.virustotal.com/gui/</a> </p>
+<p>爱站⼯具⽹ <a target="_blank" rel="noopener" href="https://www.aizhan.com/cha/nuc.edu.cn/">https://www.aizhan.com/cha/nuc.edu.cn/</a> </p>
+<p>备案信息查询 </p>
+<p>国家信息产业部对⽹站的⼀种管理，为防⽌在⽹上从事⾮法活动。主要针对国内⽹站，搭建在国外的⽹站，不需要备案。 </p>
+<p>天眼查 <a target="_blank" rel="noopener" href="https://www.tianyancha.com/">https://www.tianyancha.com/</a> </p>
+<p>ICP 备案查询⽹ <a target="_blank" rel="noopener" href="https://www.beianx.cn/">https://www.beianx.cn/</a> </p>
+<h3 id="1-5-寻找真实-IP"><a href="#1-5-寻找真实-IP" class="headerlink" title="1.5 寻找真实 IP"></a>1.5 寻找真实 IP</h3><ul>
+<li><p>不存在CDN</p>
+<p>直接访问<a target="_blank" rel="noopener" href="https://site.ip138.com/">https://site.ip138.com/</a></p>
+</li>
+<li><p>判断是否存在CDN</p>
+<ul>
+<li>ping ⽬标域名，观察域名解析情况（发现显示的是ping其他⽹站）</li>
+<li>nslookup：发现返回时多个IP的话，多半使⽤了CDN</li>
+</ul>
+</li>
+<li><p>绕过 CDN 寻找真实 IP</p>
+<ul>
+<li>ping 邮箱服务器</li>
+<li>分站域名，ping ⼆级域名</li>
+</ul>
+</li>
+</ul>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/12/07/php5/" data-id="ckyiofugh0004mgv3exwlffy4" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-php4" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2021/10/23/php4/" class="article-date">
+  <time datetime="2021-10-23T04:39:53.336Z" itemprop="datePublished">2021-10-23</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="php中"><a href="#php中" class="headerlink" title="php中"></a>php中</h1><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">1.函数</span><br><span class="line">（1）性质：可重复执行的代码片段。</span><br><span class="line">例如：$_GET[]函数</span><br><span class="line">作用：传导参数，在hackbar(一个插件)上使用</span><br><span class="line">在地址后加入\?a=(任意值)</span><br><span class="line">$_POST函数</span><br><span class="line">作用：传参，与上面函数一样，不过直接输入地址xxx.php.</span><br><span class="line">PHP strlen() 函数</span><br><span class="line">有时知道字符串值的长度是很有用的。</span><br><span class="line">strlen() 函数返回字符串的长度（字节数）。</span><br><span class="line">2.自定义函数</span><br><span class="line">function +函数名称。</span><br><span class="line">使用时需要再次声明函数。注意：函数外面的值不会影响函数里面的值</span><br><span class="line">&lt;?php</span><br><span class="line">$num2 = 90;</span><br><span class="line">function num($num1=10,$num2=20,$num3=60)&#123;</span><br><span class="line">    echo $num1+$num2+$num3;</span><br><span class="line">&#125;</span><br><span class="line">num();</span><br><span class="line">3.php运算符</span><br><span class="line">与C语言知识一样，注意特殊输出是运算符的位置</span><br><span class="line">如:&#x27;++&#x27;和 &#x27;--&#x27;</span><br><span class="line">PHP7+ 版本新增整除运算符 intdiv()，该函数返回值为第一个参数除于第二个参数的值并取整（向下取整）</span><br><span class="line">&lt;?php</span><br><span class="line">var_dump(intdiv(10, 3));</span><br><span class="line">?&gt;</span><br><span class="line">以上实例会输出：</span><br><span class="line"></span><br><span class="line">int(3)</span><br></pre></td></tr></table></figure>
+
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/10/23/php4/" data-id="ckyiofugg0003mgv3eju580xa" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-php3" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/2021/10/19/php3/" class="article-date">
@@ -83,7 +228,7 @@
 <p>若条件满足执行：前面的否则执行冒号后面的语句。</p>
 <p>if语句的应用和C语言一样。</p>
 <p>2.switch case default</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">$a = &#x27;&#x27;;</span><br><span class="line">switch($a)&#123;</span><br><span class="line">    case &#x27;冬雪&#x27;:</span><br><span class="line">       echo &#x27;冬雪没有妹子&#x27;;</span><br><span class="line">       break;</span><br><span class="line">    case &#x27;广全&#x27;:</span><br><span class="line">        echo&#x27;广全不找妹子&#x27;;</span><br><span class="line">        break;</span><br><span class="line">    case &#x27;博超&#x27;:</span><br><span class="line">        echo &#x27;博超是海王&#x27;;</span><br><span class="line">        break;</span><br><span class="line">    default:</span><br><span class="line">        echo &#x27;他们有关系&#x27;;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">&lt;?php</span><br><span class="line">$a = &#x27;&#x27;;</span><br><span class="line">switch($a)&#123;</span><br><span class="line">    case &#x27;冬雪&#x27;:</span><br><span class="line">       echo &#x27;冬雪没有妹子&#x27;;</span><br><span class="line">       break;</span><br><span class="line">    case &#x27;广全&#x27;:</span><br><span class="line">        echo&#x27;广全不找妹子&#x27;;</span><br><span class="line">        break;</span><br><span class="line">    case &#x27;博超&#x27;:</span><br><span class="line">        echo &#x27;博超是海王&#x27;;</span><br><span class="line">        break;</span><br><span class="line">    default:</span><br><span class="line">        echo &#x27;他们有关系&#x27;;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <p>3.match(与switch类似)</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">$a = &#x27;冬雪&#x27;;</span><br><span class="line">match($a)&#123;</span><br><span class="line">    &#x27;dongxue&#x27;=&gt;&#x27;海王&#x27;;</span><br><span class="line">    &#x27;guangquan&#x27;=&gt;&#x27;程序员&#x27;;</span><br><span class="line">    &#x27;bochao&#x27;=&gt;&#x27;河王&#x27;;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
@@ -95,7 +240,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://example.com/2021/10/19/php3/" data-id="ckv3b78ux0002z0v3g57y9uqb" class="article-share-link">Share</a>
+      <a data-url="http://example.com/2021/10/19/php3/" data-id="ckyiofugf0002mgv34gd917ne" class="article-share-link">Share</a>
       
       
     </footer>
@@ -124,7 +269,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://example.com/2021/10/09/php2/" data-id="ckv3b78uv0001z0v30d7n9bw2" class="article-share-link">Share</a>
+      <a data-url="http://example.com/2021/10/09/php2/" data-id="ckyiofugc0001mgv3cspc2b9g" class="article-share-link">Share</a>
       
       
     </footer>
@@ -152,7 +297,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://example.com/2021/10/03/php1/" data-id="ckv3b78uq0000z0v3bm1p9hxc" class="article-share-link">Share</a>
+      <a data-url="http://example.com/2021/10/03/php1/" data-id="ckyiofug40000mgv3hvv2aobv" class="article-share-link">Share</a>
       
       
     </footer>
@@ -183,7 +328,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://example.com/2021/09/26/%E6%88%91%E7%9A%84%E7%AC%AC%E4%B8%80%E7%AF%87%E5%8D%9A%E5%AE%A2/" data-id="ckv3b78v10003z0v35tl5derf" class="article-share-link">Share</a>
+      <a data-url="http://example.com/2021/09/26/%E6%88%91%E7%9A%84%E7%AC%AC%E4%B8%80%E7%AF%87%E5%8D%9A%E5%AE%A2/" data-id="ckyiofugn0005mgv334r41vlj" class="article-share-link">Share</a>
       
       
     </footer>
@@ -211,7 +356,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Archives</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/10/">October 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/09/">September 2021</a></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/12/">December 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/10/">October 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/09/">September 2021</a></li></ul>
     </div>
   </div>
 
@@ -224,6 +369,14 @@
       <ul>
         
           <li>
+            <a href="/2021/12/07/php5/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2021/10/23/php4/">(no title)</a>
+          </li>
+        
+          <li>
             <a href="/2021/10/19/php3/">(no title)</a>
           </li>
         
@@ -233,10 +386,6 @@
         
           <li>
             <a href="/2021/10/03/php1/">(no title)</a>
-          </li>
-        
-          <li>
-            <a href="/2021/09/26/%E6%88%91%E7%9A%84%E7%AC%AC%E4%B8%80%E7%AF%87%E5%8D%9A%E5%AE%A2/">(no title)</a>
           </li>
         
       </ul>
@@ -251,7 +400,7 @@
   
   <div class="outer">
     <div id="footer-info" class="inner">
-      &copy; 2021 John Doe<br>
+      &copy; 2022 John Doe<br>
       Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
     </div>
   </div>
