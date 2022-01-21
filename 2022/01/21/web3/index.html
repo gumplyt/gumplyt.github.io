@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+
+  
+  <title>Hexo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="web基础知识常见的绕过姿势2.7.6 系统命令构造数字:{_} &#x3D; “”   $(())&#x3D;0   $((~$(())))&#x3D;-1 相关题⽬:  ctfshow-web57 2.7.7.服务器变量构造查询语句 常⻅的系统变量:   1.系统变量  相关题⽬:web119  2.构建tac  tac&#x3D;&#x3D;&#x3D;&#x3D;&gt;${PHP_CFLAGS:${PHP_VERSION:${PHP_VERSION:A}:">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Hexo">
+<meta property="og:url" content="http://example.com/2022/01/21/web3/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="web基础知识常见的绕过姿势2.7.6 系统命令构造数字:{_} &#x3D; “”   $(())&#x3D;0   $((~$(())))&#x3D;-1 相关题⽬:  ctfshow-web57 2.7.7.服务器变量构造查询语句 常⻅的系统变量:   1.系统变量  相关题⽬:web119  2.构建tac  tac&#x3D;&#x3D;&#x3D;&#x3D;&gt;${PHP_CFLAGS:${PHP_VERSION:${PHP_VERSION:A}:">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2022-01-21T06:59:57.484Z">
+<meta property="article:modified_time" content="2022-01-21T11:49:59.570Z">
+<meta property="article:author" content="John Doe">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Hexo</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://example.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-web3" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2022/01/21/web3/" class="article-date">
+  <time datetime="2022-01-21T06:59:57.484Z" itemprop="datePublished">2022-01-21</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="web基础知识"><a href="#web基础知识" class="headerlink" title="web基础知识"></a>web基础知识</h1><h3 id="常见的绕过姿势"><a href="#常见的绕过姿势" class="headerlink" title="常见的绕过姿势"></a>常见的绕过姿势</h3><h5 id="2-7-6-系统命令构造数字"><a href="#2-7-6-系统命令构造数字" class="headerlink" title="2.7.6 系统命令构造数字:"></a>2.7.6 系统命令构造数字:</h5><p>{_} = “” </p>
+<p> $(())=0 </p>
+<p> $((~$(())))=-1</p>
+<p>相关题⽬: </p>
+<p>ctfshow-web57</p>
+<h5 id="2-7-7-服务器变量构造查询语句"><a href="#2-7-7-服务器变量构造查询语句" class="headerlink" title="2.7.7.服务器变量构造查询语句"></a>2.7.7.服务器变量构造查询语句</h5><ul>
+<li>常⻅的系统变量: </li>
+</ul>
+<p>1.系统变量 </p>
+<p>相关题⽬:web119 </p>
+<p>2.构建tac </p>
+<p>tac====&gt;${PHP_CFLAGS:${PHP_VERSION:${PHP_VERSION:<del>A}:</del>${SHLVL}}:${PHP_VERS </p>
+<p>ION:${PHP_VERSION:<del>A}:</del>${SHLVL}}} </p>
+<p>⾸先获取到3以便于得到 PHP_CFLAGS 中的tac: </p>
+<p>从 PHP_VERSION 中截取 ${PHP_VERSION:2:1} //切⽚操作 </p>
+<p>这⾥的2: 可以⽤ ${PHP_VERSION:~A} 得到字符串的最后⼀位 </p>
+<p>这⾥的1: 可以⽤ ${<del>SHLVL} 得到，因为按位取反10取反得到01所以 ～2=1 ； 因此: 3=${PHP_VERSION:${PHP_VERSION:</del>A}:<del>${SHLVL}} 最终的tac命令： a. ${PHP_CFLAGS:3:3} //切⽚操作,也就是上⾯3的语句直接复制⼀遍 也就是{PHP_CFLAGS:${PHP_VERSION:${PHP_VERSION:</del>A}:${<del>SHLVL}}:${PHP_VERSION:${PHP_VERSION:</del>A}:~${SHLVL}}} //得到tac指令 </p>
+<p>3.构建base64: </p>
+<h5 id="2-7-8-以数字和不敏感函数构造敏感函数"><a href="#2-7-8-以数字和不敏感函数构造敏感函数" class="headerlink" title="2.7.8 以数字和不敏感函数构造敏感函数"></a>2.7.8 以数字和不敏感函数构造敏感函数</h5><p>base_convert(1231231131,10,36) ===&gt;hex2bin </p>
+<p> hex2bin(dechex(1598506324))=======&gt;_GET </p>
+<p>3$hex2bin(dechex(1598506324))=======&gt;$_GET </p>
+<p>相关题⽬: </p>
+<p>ctfshow-web124 </p>
+<h5 id="2-7-9open-basedir-绕过"><a href="#2-7-9open-basedir-绕过" class="headerlink" title="2.7.9open_basedir()绕过"></a>2.7.9open_basedir()绕过</h5><ul>
+<li>传脚本绕过: </li>
+</ul>
+<p>直接把脚本当作参数传⼊，最后⼀⾏是执⾏的命令 </p>
+<p>相关题⽬:ctfshow-web72 </p>
+<ul>
+<li><p>ini_set(‘open_basedir’,’/‘); </p>
+</li>
+<li><p>系统命令不受open_basedir的限制 </p>
+</li>
+</ul>
+<p>1 &lt;?php </p>
+<p>2 ini_set(‘open_basedir’,’/var/www/html’); </p>
+<p>3 $a = eval(system(‘tac /flag.txt’)); //仍然可以执行</p>
+<p>4 ?&gt; </p>
+<ul>
+<li>⼀些其他伪协议不受 open_basedir 的限制==&gt;⽂件包含讲解 </li>
+</ul>
+<h5 id="2-7-10-⽆数字字符绕过"><a href="#2-7-10-⽆数字字符绕过" class="headerlink" title="2.7.10.⽆数字字符绕过"></a>2.7.10.⽆数字字符绕过</h5><ol>
+<li>构造POST数据包 </li>
+</ol>
+<p>通过构造数据包，向⽬标服务器发送⽂件，⽂件已被保存到tmp⽬录下再根据保存的⽂件名的特 </p>
+<p>性(最后⼀个字⺟为⼤写)，筛选⽂件，利⽤ .</p>
+<p>解题思路:</p>
+<ul>
+<li><p>构造post数据包上传文件，linux系统下会保存在/tmp/php???</p>
+</li>
+<li><p>抓包，使文件中包含sh’命令</p>
+</li>
+<li><p>利用.执行</p>
+<p>注意: </p>
+<p>1 tmp目录下文件比较多，我们所上传的文件最后一个字母是大写，因此利用ascii字母的大写匹</p>
+<p>配，过滤掉其他文件[@-[]</p>
+<p>⽆字⺟绕过正则 </p>
+<p>通过汉字或者⼀些不可⻅字符，进⾏异或，求与，取反等操作构建字⺟从⽽构建命令，最后显示 </p>
+<p>的结果是经过url编码的 </p>
+<p>脚本的说明: </p>
+<ul>
+<li> ⽣成字符表脚本 </li>
+<li> 利⽤字符表⽣成我们需要的命令 </li>
+</ul>
+</li>
+</ul>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2022/01/21/web3/" data-id="ckyocew810000c8v3e9v35ghy" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="/2022/01/20/web2/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title"></div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+
+  
+    
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/01/">January 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/12/">December 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/10/">October 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/09/">September 2021</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2022/01/21/web3/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2022/01/20/web2/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2022/01/19/web/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2022/01/18/web1/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2021/12/07/php5/">(no title)</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2022 John Doe<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+
+  
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+  </div>
+</body>
+</html>
