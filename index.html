@@ -64,6 +64,146 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-web4" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2022/01/22/web4/" class="article-date">
+  <time datetime="2022-01-22T10:56:53.115Z" itemprop="datePublished">2022-01-22</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="web基础知识"><a href="#web基础知识" class="headerlink" title="web基础知识"></a>web基础知识</h1><h3 id="常见的绕过姿势"><a href="#常见的绕过姿势" class="headerlink" title="常见的绕过姿势"></a>常见的绕过姿势</h3><h5 id="2-7-11-FFI扩展-PHP-gt-7-4-0"><a href="#2-7-11-FFI扩展-PHP-gt-7-4-0" class="headerlink" title="2.7.11 FFI扩展(PHP&gt;7.4.0)"></a>2.7.11 FFI扩展(PHP&gt;7.4.0)</h5><p>这⼀扩展可以让PHP语⾔中使⽤C语⾔中的函数和库 </p>
+<p>FFI链接 </p>
+<p>常⻅调⽤⽅式: </p>
+<ul>
+<li><p>FFI::def </p>
+</li>
+<li></li>
+</ul>
+<p>创建FFI对象,⼀个字符串，包含常规C语⾔中的⼀系列声明（类型、结构、函数、变量等）。实 </p>
+<p>际上，这个字符串可能是从C头⽂件复制粘贴的。 </p>
+<p> $ffi=FFI::cdef(“int system(const char *command);”); </p>
+<p> $a = ‘/readflag &gt; /var/www/html/1.txt’; </p>
+<p>$ffi-&gt;system($a);exit(); </p>
+<p>这段代码⾸先创建了⼀个新的 FFI 对象调⽤ Linux 库的 int system(const char* command);函 </p>
+<p>数，作⽤是把 command 指定的命令名称或程序名称传给要被命令处理器执⾏的主机环境，并 </p>
+<p>在命令完成后返回。 </p>
+<ul>
+<li>FFi::load </li>
+</ul>
+<p>加载C⽂件 </p>
+<ul>
+<li>FFi::scope </li>
+</ul>
+<p>使⽤预加载期间解析的C声明实例化FFI对象 </p>
+<ul>
+<li>FFi::new </li>
+</ul>
+<p>创建⼀个C语⾔数据结构 </p>
+<ul>
+<li>FFi::cast </li>
+</ul>
+<p>执⾏C类型转换 </p>
+<ul>
+<li>FFi::memcmp </li>
+</ul>
+<p>⽐较内存区域的⼤⼩字节 </p>
+<ul>
+<li>FFI::memcpy </li>
+</ul>
+<p>复制⼀个内存区域到另⼀个内存区域public static </p>
+<h5 id="2-7-12-特定函数绕过"><a href="#2-7-12-特定函数绕过" class="headerlink" title="2.7.12 特定函数绕过"></a>2.7.12 特定函数绕过</h5><ul>
+<li><p>parse_url </p>
+<p>作用：parse_url — 解析 URL，返回其组成部分</p>
+<p>mixed parse_url ( string $url [, int $component = -1 ] )<br>本函数解析一个 URL 并返回一个关联数组，包含在 URL 中出现的各种组成部分。</p>
+<p>参数：<br>url：要解析的 URL。无效字符将使用 _ 来替换。</p>
+<ul>
+<li><p>call_user_func </p>
+<ol>
+<li><p>调⽤类⾥⾯的静态函数</p>
+</li>
+<li><p>不区分⼤⼩写 </p>
+<p>相关题⽬ </p>
+<p>1 web415 </p>
+<ul>
+<li>preg_match绕过： </li>
+</ul>
+<ol>
+<li>不会匹配换⾏符 </li>
+</ol>
+ <?php 
+
+preg_match('/^*.(flag).*$/',$cmd){ 
+
+ echo hacker; 
+
+ } 
+
+//令$cmd=\nflag 
+
+ ?></li>
+</ol>
+</li>
+</ul>
+</li>
+</ul>
+<p>在⾮多⾏模式下,$会忽略掉句尾的%0a </p>
+<p>PHP利⽤PCRE回溯次数绕过限制 </p>
+<p>正则匹配中的某些字符对于被匹配字符串出现可匹配也可不匹配的情况，那么先不匹配，让下⼀ </p>
+<p>个正则表达式的字符去匹配，如果⽆法匹配则让该字符匹配字符串称为⼀次回溯，但正则匹配有 </p>
+<p>回溯次数的限制，⼀般利⽤脚本提交10000个字符差不多可以超过回溯次数绕过正则</p>
+<ol start="3">
+<li>⽆字⺟数字的webshell </li>
+</ol>
+<ul>
+<li>fifilter_var </li>
+</ul>
+<p>使⽤特定的过滤器过滤⼀个变量 </p>
+<p>php fifilter参考⼿册 </p>
+<p>FILTER_VALIDATE_URL:(web406) </p>
+<p>http/https协议不⽀持后⾯带有符号，所以我们绕过这个函数的时候⼀般选择任何其他协议不选 </p>
+<p>择http，其他协议⽀持符号，我们便可以构造⾃⼰的 sql 语句等</p>
+<ul>
+<li>注意: 这⾥有了 ; 前边不能是http和https协议，可以是其他协议，url并不只有http， </li>
+</ul>
+<p>相关题⽬:1 ctfshow web406-408 </p>
+<p>FILTER_VALIDATE_EMAIL(web408) </p>
+<p>检查变量是否属于 EMAIL 格式 </p>
+<p>绕过: </p>
+<p>⾮法字符放在””可以绕过检测  </p>
+<ul>
+<li><p>playload</p>
+<p>“&lt;&gt;=system($_POST[1]);?&gt;”@1.php    //非法字符放在””里面可以绕过检测</p>
+<p>FILTER_VALIDATE_BOOLEAN </p>
+<p>把值作为布尔选项来验证。如果是 “1”、”true”、”on” 和 “yes”，则返回 TRUE。如果是 </p>
+<p>“0”、”false”、”off”、”no” 和 “”，则返回 FALSE。否则返回 NULL。 </p>
+<ul>
+<li>过滤了1和true可以⽤on和yes绕过 </li>
+</ul>
+</li>
+</ul>
+<h5 id="2-7-13-语法绕过"><a href="#2-7-13-语法绕过" class="headerlink" title="2.7.13 语法绕过"></a>2.7.13 语法绕过</h5><ol>
+<li>提前闭合源⽂件 </li>
+</ol>
+<p>?&gt; 提前闭合源⽂件的 <?php ,之后再新创 <?php?></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2022/01/22/web4/" data-id="ckyprsea700008cv3f2n28xud" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-web3" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/2022/01/21/web3/" class="article-date">
@@ -732,38 +872,12 @@ call_user_func() ----------把第⼀个参数作为回调函数调⽤ call_user_
 
 
   
-    <article id="post-我的第一篇博客" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2021/09/26/%E6%88%91%E7%9A%84%E7%AC%AC%E4%B8%80%E7%AF%87%E5%8D%9A%E5%AE%A2/" class="article-date">
-  <time datetime="2021-09-26T03:39:19.401Z" itemprop="datePublished">2021-09-26</time>
-</a>
+
+
+  <nav id="page-nav">
     
-  </div>
-  <div class="article-inner">
-    
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h1 id="数据结构"><a href="#数据结构" class="headerlink" title="数据结构"></a>数据结构</h1><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span>  //定义顺序表&#123;</span></span><br><span class="line">    </span><br><span class="line"><span class="keyword">int</span> date[<span class="number">100</span>];<span class="comment">//数组大小（即存储度）</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">int</span> length;<span class="comment">//数据长度</span></span><br><span class="line"></span><br><span class="line">&#125;seqlist;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">count</span> <span class="params">(seqlist L, <span class="keyword">int</span> x)</span></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> i;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">int</span> num = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span>(i = <span class="number">0</span>;i &lt; L.length; i++)</span><br><span class="line"></span><br><span class="line">&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span>(L.date[i] = x)</span><br><span class="line"></span><br><span class="line">        num++;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">return</span> num;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">int</span> main（）&#123;</span><br><span class="line"></span><br><span class="line">seqlist L=&#123;&#123;<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">4</span>,<span class="number">55</span>,<span class="number">6</span>,<span class="number">6</span>,<span class="number">6</span>,<span class="number">7</span>,<span class="number">4</span>,<span class="number">6</span>,&#125;,<span class="number">12</span>&#125;;<span class="comment">//输入的顺序表</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">printf</span>(<span class="string">&quot;count = %d&quot;</span>, count (<span class="built_in">list</span>,<span class="number">4</span>));</span><br><span class="line"></span><br><span class="line"><span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<ul>
-<li>主要问题是基础不牢固，顺序表输入不清楚。</li>
-</ul>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://example.com/2021/09/26/%E6%88%91%E7%9A%84%E7%AC%AC%E4%B8%80%E7%AF%87%E5%8D%9A%E5%AE%A2/" data-id="ckyiofugn0005mgv334r41vlj" class="article-share-link">Share</a>
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-
+    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="extend next" rel="next" href="/page/2/">Next &amp;raquo;</a>
+  </nav>
 
 </section>
         
@@ -794,6 +908,10 @@ call_user_func() ----------把第⼀个参数作为回调函数调⽤ call_user_
       <ul>
         
           <li>
+            <a href="/2022/01/22/web4/">(no title)</a>
+          </li>
+        
+          <li>
             <a href="/2022/01/21/web3/">(no title)</a>
           </li>
         
@@ -807,10 +925,6 @@ call_user_func() ----------把第⼀个参数作为回调函数调⽤ call_user_
         
           <li>
             <a href="/2022/01/18/web1/">(no title)</a>
-          </li>
-        
-          <li>
-            <a href="/2021/12/07/php5/">(no title)</a>
           </li>
         
       </ul>
