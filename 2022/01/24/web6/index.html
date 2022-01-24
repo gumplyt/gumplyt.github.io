@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+
+  
+  <title>Hexo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="web基础知识 任意⽬录遍历  防御： php.ini 当中的配置 open_basedir ，将很好可以设置⽤户需要执⾏的  ⽂件⽬录，如果设置⽬录的话，PHP仅仅在该⽬录内搜索⽂件。⽽没有设置 open_basedir时，⽂件包含漏洞可以访问任意⽂件 伪协议读取与包含：  结合⽂件包含函数，伪协议可以读取或者写⼊⽂件  在某个文件a没有highlight_file函数进行高亮的时候我们在页面中">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Hexo">
+<meta property="og:url" content="http://example.com/2022/01/24/web6/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="web基础知识 任意⽬录遍历  防御： php.ini 当中的配置 open_basedir ，将很好可以设置⽤户需要执⾏的  ⽂件⽬录，如果设置⽬录的话，PHP仅仅在该⽬录内搜索⽂件。⽽没有设置 open_basedir时，⽂件包含漏洞可以访问任意⽂件 伪协议读取与包含：  结合⽂件包含函数，伪协议可以读取或者写⼊⽂件  在某个文件a没有highlight_file函数进行高亮的时候我们在页面中">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2022-01-24T11:46:06.859Z">
+<meta property="article:modified_time" content="2022-01-24T12:40:34.691Z">
+<meta property="article:author" content="John Doe">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Hexo</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://example.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-web6" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2022/01/24/web6/" class="article-date">
+  <time datetime="2022-01-24T11:46:06.859Z" itemprop="datePublished">2022-01-24</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="web基础知识"><a href="#web基础知识" class="headerlink" title="web基础知识"></a>web基础知识</h1><ol start="3">
+<li><h5 id="任意⽬录遍历"><a href="#任意⽬录遍历" class="headerlink" title="任意⽬录遍历"></a>任意⽬录遍历</h5></li>
+</ol>
+<p>防御： php.ini 当中的配置 open_basedir ，将很好可以设置⽤户需要执⾏的 </p>
+<p>⽂件⽬录，如果设置⽬录的话，PHP仅仅在该⽬录内搜索⽂件。⽽没有设置</p>
+<p>open_basedir时，⽂件包含漏洞可以访问任意⽂件</p>
+<p>伪协议读取与包含： </p>
+<p>结合⽂件包含函数，伪协议可以读取或者写⼊⽂件 </p>
+<p>在某个文件a没有highlight_file函数进行高亮的时候我们在页面中是无法看到该页面的内容的，如果另一个页面b存在文件包含漏洞，我们就可以利用伪协议读取a文件的源码一些伪协议还可以执行命令</p>
+<ul>
+<li><p>fifilter协议</p>
+<p>含义：file协议主要用于访问本地计算机中的文件，好比通过Windows的资源管理器中打开文件或者通过右键单击‘打开’一样。</p>
+<p>使用：file协议的基本格式如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">file:///文件路径</span><br></pre></td></tr></table></figure>
+
+<p>比如需要打开E盘下txt目录中的index.txt，那么在资源管理器或者浏览器地址栏中输入：file:///E:/txt/index.txt。用file:///+文件地址，其实等价于文件的地址。即：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">file:///C:/Users/CLi/AppData/Local/Temp/WindowsLiveWriter1627300719/supfiles52F410/wangdan-se-436963[2].jpg </span><br></pre></td></tr></table></figure>
+
+<p>等价于：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">C:/Users/CLi/AppData/Local/Temp/WindowsLiveWriter1627300719/supfiles52F410/wangdan-se-436963[2].jpg </span><br></pre></td></tr></table></figure>
+
+<p>常⽤的过滤器: </p>
+<ul>
+<li>convert.base64-encode： </li>
+</ul>
+<p>convert.base64-encode 和 convert.base64-decode 使⽤这两个过滤器等同于⽤base64_encode </p>
+<p>和base64_decode函数处理数据 convert.base64-encode⽀持以⼀个关 联数组给出的参数。 </p>
+<p>如果给出了 line-length，base64 输出将被⽤ line-length个字符为⻓度⽽截成块。 如果给出 </p>
+<p>了 line-break-chars，每块将被⽤给出的字符隔开。这些参数的效果和⽤ base64_encode()再 </p>
+<p>加上 chunk_split()相同 </p>
+<ul>
+<li>spring.rot13 </li>
+</ul>
+<p>rot13编码⼯具 </p>
+<p>str_rot13 –对字符串执行rot13转换，ROT13编码简单滴使用字母表中后面第</p>
+<p>13个字母替换当前字母，同时忽略非字母表中的字符，编码和解码都是用相同的函数，</p>
+<p>传递一个编码过的字符串作为参数，得到原始的字符</p>
+<ul>
+<li>其他过滤器</li>
+</ul>
+</li>
+<li><p>data协议: </p>
+<p>受限于 allow_url_include </p>
+<p>可以读取数据流，也可⽤来执⾏php代码，可以把data语句认为是⼀个⽂件 </p>
+</li>
+</ul>
+<p>常用数据格式：</p>
+<ol>
+<li>data:,&lt;文本数据&gt; </li>
+<li>  data:text/plain,&lt;文本数据&gt; </li>
+<li>  data:text/html,&lt;HTML代码&gt; </li>
+<li>  data:text/html;base64,&lt;base64编码的HTML代码&gt; </li>
+<li>  data:text/css,&lt;CSS代码&gt; </li>
+<li>  data:text/css;base64,&lt;base64编码的CSS代码&gt; </li>
+<li>  data:text/javascript,&lt;Javascript代码&gt; </li>
+<li>  data:text/javascript;base64,&lt;base64编码的Javascript代码&gt; </li>
+<li>  data:image/gif;base64,base64编码的gif图片数据 </li>
+<li>  data:image/png;base64,base64编码的png图片数据 </li>
+<li>  data:image/jpeg;base64,base64编码的jpeg图片数据 </li>
+<li>  data:image/x-icon;base64,base64编码的icon图片数据</li>
+</ol>
+<p>重要名称定义：</p>
+<p>URI（Uniform Resource Identifier）:统一资源标识符,服务器资源名被称为统一资源标识符。</p>
+<p>URL（Uniform Resource Locator）:统一资源定位符，描述了一台特定服务器上某资源的特定位置。</p>
+<p>URN（Uniform Resource Name）:统一资源名称</p>
+<ul>
+<li>php://input</li>
+</ul>
+<p>用于执行 POST 数据,也可认为是一个文件POST数据是内容，常用于rce中</p>
+<p>enctype=”multipart/form-data” 的时候 php://input 是⽆效的 </p>
+<p>说明: </p>
+<ul>
+<li><p>需要开启allow_url_include </p>
+</li>
+<li><p>php://input 读⼊请求的POST数据并且执⾏ </p>
+</li>
+<li><p>表单确定类别 enctype=”multipart/form-data” ⽆法读取⽆法执⾏ </p>
+</li>
+</ul>
+<p>zip://&amp;bzip2://&amp;zlib:// </p>
+<ul>
+<li><p>allow_url_fopen :offff/on </p>
+</li>
+<li><p>allow_url_include :offff/on </p>
+</li>
+</ul>
+<p>压缩流 </p>
+<ul>
+<li><p>compress.zlib://file.gz </p>
+</li>
+<li><p> compress.bzip2://file.bz2 </p>
+</li>
+<li><p>zip://archive.zip#dir/file.txt </p>
+</li>
+</ul>
+<p>作⽤： zip:// &amp; bzip2:// &amp; zlib:// 均属于压缩流，可以访问压缩⽂件中的⼦⽂件， </p>
+<p>更重要的是不需要指定后缀名，可修改为任意后缀： jpg png gif xxx 等等。 </p>
+<p>主要⽤⽂件包含中上传本地⼀句话⽂件，利⽤include执⾏ </p>
+<p>具体细节：</p>
+<p>file:// </p>
+<p>⽤于访问本地⽂件系统，在CTF中通常⽤来读取本地⽂件的且不受allow_url_fopen与 </p>
+<p>allow_url_include的影响 </p>
+<p>http:// https://条件： </p>
+<ul>
+<li><p>allow_url_fopen :on </p>
+</li>
+<li><p>allow_url_include :on </p>
+</li>
+</ul>
+<p>作⽤：常规 URL 形式，允许通过 HTTP 1.0 的 GET⽅法，以只读访问⽂件或资 </p>
+<p>源。CTF中通常⽤于远程包含。 </p>
+<p>示例： </p>
+<p>1 ?file=<a target="_blank" rel="noopener" href="http://127.0.0.1/phpinfo.txt">http://127.0.0.1/phpinfo.txt</a> </p>
+<p>phar:// </p>
+<p>有些waf不会防php后缀的⽂件，但是他会检测⾥⾯的内容，我们可以通过包含的⽅式，</p>
+<p>包含rar后缀或者phar后缀⾥⾯的txt⽂件或者jpg⽂件达到绕过防护的⽬的 </p>
+<p>test.php </p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2022/01/24/web6/" data-id="ckysoi0xr0000hov35vghfto0" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="/2022/01/23/web5/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title"></div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+
+  
+    
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/01/">January 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/12/">December 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/10/">October 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/09/">September 2021</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2022/01/24/web6/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2022/01/23/web5/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2022/01/22/web4/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2022/01/21/web3/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2022/01/20/web2/">(no title)</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2022 John Doe<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+
+  
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+  </div>
+</body>
+</html>
