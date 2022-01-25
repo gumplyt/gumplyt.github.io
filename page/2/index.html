@@ -64,6 +64,47 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-php3" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2021/10/19/php3/" class="article-date">
+  <time datetime="2021-10-19T00:38:22.852Z" itemprop="datePublished">2021-10-19</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>php进程</p>
+<hr>
+<p>php条件判断</p>
+<p>1.三元运算符（？：）</p>
+<p>若条件满足执行：前面的否则执行冒号后面的语句。</p>
+<p>if语句的应用和C语言一样。</p>
+<p>2.switch case default</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">&lt;?php</span><br><span class="line">$a = &#x27;&#x27;;</span><br><span class="line">switch($a)&#123;</span><br><span class="line">    case &#x27;冬雪&#x27;:</span><br><span class="line">       echo &#x27;冬雪没有妹子&#x27;;</span><br><span class="line">       break;</span><br><span class="line">    case &#x27;广全&#x27;:</span><br><span class="line">        echo&#x27;广全不找妹子&#x27;;</span><br><span class="line">        break;</span><br><span class="line">    case &#x27;博超&#x27;:</span><br><span class="line">        echo &#x27;博超是海王&#x27;;</span><br><span class="line">        break;</span><br><span class="line">    default:</span><br><span class="line">        echo &#x27;他们有关系&#x27;;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>3.match(与switch类似)</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">$a = &#x27;冬雪&#x27;;</span><br><span class="line">match($a)&#123;</span><br><span class="line">    &#x27;dongxue&#x27;=&gt;&#x27;海王&#x27;;</span><br><span class="line">    &#x27;guangquan&#x27;=&gt;&#x27;程序员&#x27;;</span><br><span class="line">    &#x27;bochao&#x27;=&gt;&#x27;河王&#x27;;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>match只适用于php8.0.</p>
+<p>它是一个表达式，其结果可以在存储变量中返回。</p>
+<p>只支持单行表达式，不可以陈述，不需要中断。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/10/19/php3/" data-id="ckyiofugf0002mgv34gd917ne" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-php2" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/2021/10/09/php2/" class="article-date">
@@ -188,6 +229,10 @@
       <ul>
         
           <li>
+            <a href="/2022/01/25/web7/">(no title)</a>
+          </li>
+        
+          <li>
             <a href="/2022/01/24/web6/">(no title)</a>
           </li>
         
@@ -201,10 +246,6 @@
         
           <li>
             <a href="/2022/01/21/web3/">(no title)</a>
-          </li>
-        
-          <li>
-            <a href="/2022/01/20/web2/">(no title)</a>
           </li>
         
       </ul>

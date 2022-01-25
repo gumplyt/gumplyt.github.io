@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+
+  
+  <title>Hexo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="web基础知识其他协议后补 ⽂件上传:  没有丝毫过滤  上传php⽂件，之后访问执⾏⼀句话   有前端js检验:   先上传规定的后缀⽂件，之后bp抓包，改后缀⽂件名    ⽂件后缀绕过  在服务器限制某些后缀⽂件不允许上传，但是有些Apache是允许歇息其他⽂件后缀的，例如在  https.conf中，如果配置有如下代码，就能解析php和phtml的⽂件  1 AddType applicat">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Hexo">
+<meta property="og:url" content="http://example.com/2022/01/25/web7/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="web基础知识其他协议后补 ⽂件上传:  没有丝毫过滤  上传php⽂件，之后访问执⾏⼀句话   有前端js检验:   先上传规定的后缀⽂件，之后bp抓包，改后缀⽂件名    ⽂件后缀绕过  在服务器限制某些后缀⽂件不允许上传，但是有些Apache是允许歇息其他⽂件后缀的，例如在  https.conf中，如果配置有如下代码，就能解析php和phtml的⽂件  1 AddType applicat">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2022-01-25T11:23:47.467Z">
+<meta property="article:modified_time" content="2022-01-25T12:34:47.433Z">
+<meta property="article:author" content="John Doe">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Hexo</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://example.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-web7" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2022/01/25/web7/" class="article-date">
+  <time datetime="2022-01-25T11:23:47.467Z" itemprop="datePublished">2022-01-25</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="web基础知识"><a href="#web基础知识" class="headerlink" title="web基础知识"></a>web基础知识</h1><p>其他协议后补</p>
+<p>⽂件上传:</p>
+<ol>
+<li><h5 id="没有丝毫过滤"><a href="#没有丝毫过滤" class="headerlink" title="没有丝毫过滤"></a>没有丝毫过滤</h5></li>
+</ol>
+<p>上传php⽂件，之后访问执⾏⼀句话 </p>
+<ol start="2">
+<li><h5 id="有前端js检验"><a href="#有前端js检验" class="headerlink" title="有前端js检验:"></a>有前端js检验:</h5></li>
+</ol>
+<ul>
+<li>先上传规定的后缀⽂件，之后bp抓包，改后缀⽂件名 </li>
+</ul>
+<ol start="3">
+<li><h5 id="⽂件后缀绕过"><a href="#⽂件后缀绕过" class="headerlink" title="⽂件后缀绕过"></a>⽂件后缀绕过</h5></li>
+</ol>
+<p>在服务器限制某些后缀⽂件不允许上传，但是有些Apache是允许歇息其他⽂件后缀的，例如在 </p>
+<p>https.conf中，如果配置有如下代码，就能解析php和phtml的⽂件 </p>
+<p>1 AddType application/x-https-php .php .phtml </p>
+<p>可尝试： </p>
+<p>.php .php2 .php3 .php5 .phtml </p>
+<p> .asp .aspx .ascx .ashx .asa .cer </p>
+<p>.jsp .jspx </p>
+<p>结合Apache⽂件解析机制，从右向左开始解析⽂件后缀，若后缀名不可识别，则继续判</p>
+<p>断直到遇到可解析的后缀为⽌。 </p>
+<p>⽐如：Apache的多后缀解析漏洞：解析127.0.0.1/1.php.366==127.0.0.1/1.php  </p>
+<ol start="4">
+<li><h5 id="⽂件类型检测"><a href="#⽂件类型检测" class="headerlink" title="⽂件类型检测:"></a>⽂件类型检测:</h5></li>
+<li><p>MIME绕过：Content-Type 字段 </p>
+</li>
+</ol>
+<p>判断 $_Files[“file”][“type”] 是不是图⽚格式（</p>
+<p>image/gif、imge/jpeg、 </p>
+<p>image\pjpeg），不是则不允许上传。 $_Files[“file”][“type”] 的值是从请求 </p>
+<p>数据包中 Content-Type 中获取。 </p>
+<ol start="2">
+<li><h5 id="⽂件幻数检测"><a href="#⽂件幻数检测" class="headerlink" title="⽂件幻数检测"></a>⽂件幻数检测</h5></li>
+</ol>
+<p>利⽤getimagesize()函数获取图⽚的宽⾼等信息，如果上传的不是图⽚，则获取不到信息</p>
+<p>绕过⽅法⼀：⽂件头添加 </p>
+<p>在脚本⽂件开头补充图⽚对应的头部值，或在图⽚后写⼊写⼊脚本代码 </p>
+<p>绕过⽅法⼆：上传图⽚⽊⻢</p>
+<p> 一.</p>
+<p> 图片合并：</p>
+<p> 命令：</p>
+<p>copy 1.jpg/b+phpinfo.php/a hack.jpg </p>
+<p>以二进制的方式打开，写入文件</p>
+<p>二.</p>
+<p>1 写入到 版权 当中</p>
+<p>法四：直接使⽤ 010Editor 写⼊，相当于法三 </p>
+<ol start="3">
+<li><h5 id="⽂件内容特殊字符过滤"><a href="#⽂件内容特殊字符过滤" class="headerlink" title="⽂件内容特殊字符过滤"></a>⽂件内容特殊字符过滤</h5></li>
+</ol>
+<ul>
+<li>常⻅的过滤: </li>
+</ul>
+<p>⽂件内容: </p>
+<?php eval($_POST[1]);?><p>过滤了 [] ⽤ {} 替换 </p>
+ <?php eval($_POST{1})?><h5 id="5-零零截断绕过"><a href="#5-零零截断绕过" class="headerlink" title="5.零零截断绕过:"></a>5.零零截断绕过:</h5><p>截断原理: 系统在对⽂件名的读取时，如果遇到ascii码为零的位置就停⽌，⽽这个ascii </p>
+<p>码为零的位置在16进制中是00，⽤0x开头表示0x00，就会认为读取已结束，也就是所</p>
+<p>说的0x00截断。 </p>
+<p>截断条件: php版本⼩于5.3.4,PHP的magic_quote_gpc为0ffff状态 </p>
+<p>这函数是魔术引号，会对敏感的字符转义的 空就会被转义加个反斜杠 </p>
+<ul>
+<li><p>绕过⽅法: </p>
+</li>
+<li><p>⽤burp抓包，然后修改 </p>
+</li>
+</ul>
+<p>GET ⽅式提交–会⾃动将 %00 解析为 0x00 ，发挥截断作⽤</p>
+<p>当是GET接收情况的时候，直接用 %00 就可以了。</p>
+<p>某些情况下，直接在文件名中加 %00 进行截断这是不对的，因为 %00 会以字符串的形式解析了。</p>
+<p>如果没有做后缀名判断的情况下，那样会变成：</p>
+<blockquote>
+<p><a target="_blank" rel="noopener" href="http://www.xxx.com/qq.php%00.jpg">www.xxx.com/qq.php%00.jpg</a> =&gt; <a target="_blank" rel="noopener" href="http://www.xxx.com/qq.php%00.jpg">www.xxx.com/qq.php%00.jpg</a></p>
+</blockquote>
+<p>也就是所谓的任意文件上传漏洞了，这又是另一个概念了。如果做了后缀名判断的情况下，那样是会直接报错，不让你上传，因为你的后缀是 .jpg，不是 .php；</p>
+<ul>
+<li><p>POST ⽅式提交–需要⼿动将其解码为 ⼗六进制的 00 ，发挥截断作⽤ </p>
+<p>当是POST接收情况的时候，正确的用法应该是我们需要对 %00 做一个URL解码，也就是URL-decode；</p>
+<ul>
+<li>注意：</li>
+</ul>
+<p>有些时候数据包中必须含有<strong>上传文件后的目录</strong>情况才可以用。</p>
+<p>例如：数据包中存在 path: uploads/，那么攻击者可以通过修改path的值来构造paylod: uploads/aa.php%00</p>
+<ul>
+<li>两者用法不同原因：这是因为 %00 截断在 GET 中被 url 解码之后是空字符。但是在 POST 中 %00 不会被 url 解码，所以只能通过 burpsuite 修改 hex 值为 00 （URL decode）进行截断。</li>
+</ul>
+</li>
+</ul>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2022/01/25/web7/" data-id="ckyu3qq54000028v3awtm0f62" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="/2022/01/24/web6/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title"></div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+
+  
+    
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/01/">January 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/12/">December 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/10/">October 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/09/">September 2021</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2022/01/25/web7/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2022/01/24/web6/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2022/01/23/web5/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2022/01/22/web4/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2022/01/21/web3/">(no title)</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2022 John Doe<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+
+  
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+  </div>
+</body>
+</html>

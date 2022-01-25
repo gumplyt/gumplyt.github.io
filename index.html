@@ -64,6 +64,121 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-web7" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2022/01/25/web7/" class="article-date">
+  <time datetime="2022-01-25T11:23:47.467Z" itemprop="datePublished">2022-01-25</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="web基础知识"><a href="#web基础知识" class="headerlink" title="web基础知识"></a>web基础知识</h1><p>其他协议后补</p>
+<p>⽂件上传:</p>
+<ol>
+<li><h5 id="没有丝毫过滤"><a href="#没有丝毫过滤" class="headerlink" title="没有丝毫过滤"></a>没有丝毫过滤</h5></li>
+</ol>
+<p>上传php⽂件，之后访问执⾏⼀句话 </p>
+<ol start="2">
+<li><h5 id="有前端js检验"><a href="#有前端js检验" class="headerlink" title="有前端js检验:"></a>有前端js检验:</h5></li>
+</ol>
+<ul>
+<li>先上传规定的后缀⽂件，之后bp抓包，改后缀⽂件名 </li>
+</ul>
+<ol start="3">
+<li><h5 id="⽂件后缀绕过"><a href="#⽂件后缀绕过" class="headerlink" title="⽂件后缀绕过"></a>⽂件后缀绕过</h5></li>
+</ol>
+<p>在服务器限制某些后缀⽂件不允许上传，但是有些Apache是允许歇息其他⽂件后缀的，例如在 </p>
+<p>https.conf中，如果配置有如下代码，就能解析php和phtml的⽂件 </p>
+<p>1 AddType application/x-https-php .php .phtml </p>
+<p>可尝试： </p>
+<p>.php .php2 .php3 .php5 .phtml </p>
+<p> .asp .aspx .ascx .ashx .asa .cer </p>
+<p>.jsp .jspx </p>
+<p>结合Apache⽂件解析机制，从右向左开始解析⽂件后缀，若后缀名不可识别，则继续判</p>
+<p>断直到遇到可解析的后缀为⽌。 </p>
+<p>⽐如：Apache的多后缀解析漏洞：解析127.0.0.1/1.php.366==127.0.0.1/1.php  </p>
+<ol start="4">
+<li><h5 id="⽂件类型检测"><a href="#⽂件类型检测" class="headerlink" title="⽂件类型检测:"></a>⽂件类型检测:</h5></li>
+<li><p>MIME绕过：Content-Type 字段 </p>
+</li>
+</ol>
+<p>判断 $_Files[“file”][“type”] 是不是图⽚格式（</p>
+<p>image/gif、imge/jpeg、 </p>
+<p>image\pjpeg），不是则不允许上传。 $_Files[“file”][“type”] 的值是从请求 </p>
+<p>数据包中 Content-Type 中获取。 </p>
+<ol start="2">
+<li><h5 id="⽂件幻数检测"><a href="#⽂件幻数检测" class="headerlink" title="⽂件幻数检测"></a>⽂件幻数检测</h5></li>
+</ol>
+<p>利⽤getimagesize()函数获取图⽚的宽⾼等信息，如果上传的不是图⽚，则获取不到信息</p>
+<p>绕过⽅法⼀：⽂件头添加 </p>
+<p>在脚本⽂件开头补充图⽚对应的头部值，或在图⽚后写⼊写⼊脚本代码 </p>
+<p>绕过⽅法⼆：上传图⽚⽊⻢</p>
+<p> 一.</p>
+<p> 图片合并：</p>
+<p> 命令：</p>
+<p>copy 1.jpg/b+phpinfo.php/a hack.jpg </p>
+<p>以二进制的方式打开，写入文件</p>
+<p>二.</p>
+<p>1 写入到 版权 当中</p>
+<p>法四：直接使⽤ 010Editor 写⼊，相当于法三 </p>
+<ol start="3">
+<li><h5 id="⽂件内容特殊字符过滤"><a href="#⽂件内容特殊字符过滤" class="headerlink" title="⽂件内容特殊字符过滤"></a>⽂件内容特殊字符过滤</h5></li>
+</ol>
+<ul>
+<li>常⻅的过滤: </li>
+</ul>
+<p>⽂件内容: </p>
+<?php eval($_POST[1]);?><p>过滤了 [] ⽤ {} 替换 </p>
+ <?php eval($_POST{1})?><h5 id="5-零零截断绕过"><a href="#5-零零截断绕过" class="headerlink" title="5.零零截断绕过:"></a>5.零零截断绕过:</h5><p>截断原理: 系统在对⽂件名的读取时，如果遇到ascii码为零的位置就停⽌，⽽这个ascii </p>
+<p>码为零的位置在16进制中是00，⽤0x开头表示0x00，就会认为读取已结束，也就是所</p>
+<p>说的0x00截断。 </p>
+<p>截断条件: php版本⼩于5.3.4,PHP的magic_quote_gpc为0ffff状态 </p>
+<p>这函数是魔术引号，会对敏感的字符转义的 空就会被转义加个反斜杠 </p>
+<ul>
+<li><p>绕过⽅法: </p>
+</li>
+<li><p>⽤burp抓包，然后修改 </p>
+</li>
+</ul>
+<p>GET ⽅式提交–会⾃动将 %00 解析为 0x00 ，发挥截断作⽤</p>
+<p>当是GET接收情况的时候，直接用 %00 就可以了。</p>
+<p>某些情况下，直接在文件名中加 %00 进行截断这是不对的，因为 %00 会以字符串的形式解析了。</p>
+<p>如果没有做后缀名判断的情况下，那样会变成：</p>
+<blockquote>
+<p><a target="_blank" rel="noopener" href="http://www.xxx.com/qq.php%00.jpg">www.xxx.com/qq.php%00.jpg</a> =&gt; <a target="_blank" rel="noopener" href="http://www.xxx.com/qq.php%00.jpg">www.xxx.com/qq.php%00.jpg</a></p>
+</blockquote>
+<p>也就是所谓的任意文件上传漏洞了，这又是另一个概念了。如果做了后缀名判断的情况下，那样是会直接报错，不让你上传，因为你的后缀是 .jpg，不是 .php；</p>
+<ul>
+<li><p>POST ⽅式提交–需要⼿动将其解码为 ⼗六进制的 00 ，发挥截断作⽤ </p>
+<p>当是POST接收情况的时候，正确的用法应该是我们需要对 %00 做一个URL解码，也就是URL-decode；</p>
+<ul>
+<li>注意：</li>
+</ul>
+<p>有些时候数据包中必须含有<strong>上传文件后的目录</strong>情况才可以用。</p>
+<p>例如：数据包中存在 path: uploads/，那么攻击者可以通过修改path的值来构造paylod: uploads/aa.php%00</p>
+<ul>
+<li>两者用法不同原因：这是因为 %00 截断在 GET 中被 url 解码之后是空字符。但是在 POST 中 %00 不会被 url 解码，所以只能通过 burpsuite 修改 hex 值为 00 （URL decode）进行截断。</li>
+</ul>
+</li>
+</ul>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2022/01/25/web7/" data-id="ckyu3qq54000028v3awtm0f62" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-web6" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/2022/01/24/web6/" class="article-date">
@@ -1068,47 +1183,6 @@ call_user_func() ----------把第⼀个参数作为回调函数调⽤ call_user_
 
 
   
-    <article id="post-php3" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2021/10/19/php3/" class="article-date">
-  <time datetime="2021-10-19T00:38:22.852Z" itemprop="datePublished">2021-10-19</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>php进程</p>
-<hr>
-<p>php条件判断</p>
-<p>1.三元运算符（？：）</p>
-<p>若条件满足执行：前面的否则执行冒号后面的语句。</p>
-<p>if语句的应用和C语言一样。</p>
-<p>2.switch case default</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">&lt;?php</span><br><span class="line">$a = &#x27;&#x27;;</span><br><span class="line">switch($a)&#123;</span><br><span class="line">    case &#x27;冬雪&#x27;:</span><br><span class="line">       echo &#x27;冬雪没有妹子&#x27;;</span><br><span class="line">       break;</span><br><span class="line">    case &#x27;广全&#x27;:</span><br><span class="line">        echo&#x27;广全不找妹子&#x27;;</span><br><span class="line">        break;</span><br><span class="line">    case &#x27;博超&#x27;:</span><br><span class="line">        echo &#x27;博超是海王&#x27;;</span><br><span class="line">        break;</span><br><span class="line">    default:</span><br><span class="line">        echo &#x27;他们有关系&#x27;;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>3.match(与switch类似)</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">$a = &#x27;冬雪&#x27;;</span><br><span class="line">match($a)&#123;</span><br><span class="line">    &#x27;dongxue&#x27;=&gt;&#x27;海王&#x27;;</span><br><span class="line">    &#x27;guangquan&#x27;=&gt;&#x27;程序员&#x27;;</span><br><span class="line">    &#x27;bochao&#x27;=&gt;&#x27;河王&#x27;;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>match只适用于php8.0.</p>
-<p>它是一个表达式，其结果可以在存储变量中返回。</p>
-<p>只支持单行表达式，不可以陈述，不需要中断。</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://example.com/2021/10/19/php3/" data-id="ckyiofugf0002mgv34gd917ne" class="article-share-link">Share</a>
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-  
 
 
   <nav id="page-nav">
@@ -1145,6 +1219,10 @@ call_user_func() ----------把第⼀个参数作为回调函数调⽤ call_user_
       <ul>
         
           <li>
+            <a href="/2022/01/25/web7/">(no title)</a>
+          </li>
+        
+          <li>
             <a href="/2022/01/24/web6/">(no title)</a>
           </li>
         
@@ -1158,10 +1236,6 @@ call_user_func() ----------把第⼀个参数作为回调函数调⽤ call_user_
         
           <li>
             <a href="/2022/01/21/web3/">(no title)</a>
-          </li>
-        
-          <li>
-            <a href="/2022/01/20/web2/">(no title)</a>
           </li>
         
       </ul>
