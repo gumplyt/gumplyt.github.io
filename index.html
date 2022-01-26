@@ -64,6 +64,183 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-web8" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2022/01/26/web8/" class="article-date">
+  <time datetime="2022-01-26T10:42:48.215Z" itemprop="datePublished">2022-01-26</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="web基础知识"><a href="#web基础知识" class="headerlink" title="web基础知识"></a>web基础知识</h1><ol start="6">
+<li><h5 id="htaccess-攻击"><a href="#htaccess-攻击" class="headerlink" title=".htaccess 攻击"></a><strong>.htaccess</strong> 攻击</h5></li>
+</ol>
+<ul>
+<li>上传.htaccess⽂件 </li>
+</ul>
+<p>httpd-conf 是APache 系统的配置⽂件（全局的）； </p>
+<p>.htaccess ⽂件是 Apache 服务器的分布式配置⽂件（局部的），该配置⽂件会覆盖 </p>
+<p>Apache服务器的全局配置，只对 该⽂件所在⽬录下的⽂件起作⽤。 </p>
+<p>如果⼀个Web应⽤程序允许上传.htaccess⽂件，则说明攻击者可以更改Apache的配 </p>
+<p>置。 </p>
+<ul>
+<li><p> 缺点：只在 Apache 服务器 下起作⽤ </p>
+</li>
+<li><p>使⽤条件： </p>
+</li>
+</ul>
+<p>Apache⽬录下：/conf/httpd.conf 中 AllowOverride 为 All 则意味 </p>
+<p>着.htaccess ⽂件可更改 Apache 配置利⽤⼀：将指定后缀⽂件当作 php ⽂件处理 </p>
+<p> AddType application/x-httpd-php .jpg //会将 jpg 文件当作 php 解析会将 jpg 文</p>
+<p>件当作 php 解析或者 SetHandler application/x-httpd-php //所有文件都会当作php文件解析</p>
+<p>利⽤⼆：⽂件当中包含 php 关键字 </p>
+<p> 文件名中只要包含 .php 关键字就当作php处理：phpinfo.php.png </p>
+<p>在 .htaccess 文件中写入：</p>
+<p> AddHandler php5-script php </p>
+<p>利⽤三：匹配⽂件名 </p>
+<p> 匹配文件名：文件名</p>
+<p>&lt;FilesMatch “文件名”&gt; </p>
+<p>SetHandler application/x-httpd-php </p>
+ </FilesMatch> 
+
+<p>在Apache的解析顺序中，是从右到左开始解析⽂件后缀的。如果最右侧的扩展名不可识别，就 </p>
+<p>继续往左判断，直到遇到可解析的⽂件为⽌ </p>
+<ol start="7">
+<li><h5 id="user-ini-攻击"><a href="#user-ini-攻击" class="headerlink" title=".user.ini 攻击"></a><strong>.user.ini</strong> 攻击</h5></li>
+</ol>
+<p>PHP中的每个配置都有其所处的模式。其中允许使⽤ .user.ini 能够更改的模式 </p>
+<p>有 PHP_INI_PERDIR 和 PHP_INI_USER 等等。 </p>
+<p>⽽ PHP_INI_PERDIR 这个模式当中的 auto_append_fifile 和 auto_prepend_fifile 这 </p>
+<p>两个配置对我们有很⼤帮助。 </p>
+<p>auto_append_fifile ：指定⼀个⽂件在主⽂件解析之前解析； </p>
+<p>auto_prepend_fifile：指定⼀个⽂件在主⽂件之后解析。 原理：我们可以使⽤ auto_prepend_fifile 这个选项，将我们所要上传的图⽚⻢在该 </p>
+<p>⽬录下的其它PHP⽂件执⾏之前⾸先 包含 我们所上传的图⽚⻢。相当于在原有 </p>
+<p>的 PHP⽂件的代码开头加上了 require(‘a.jpg’) ，从⽽进⾏了 文件包</p>
+<p>含 ，这样我们的图⽚⻢就得到了利⽤。 </p>
+<ul>
+<li><p>优点：不仅仅限于 Apache 服务器，还可以⽤于 Nginx , IIS 等服务器。 </p>
+</li>
+<li><p>使⽤条件： </p>
+</li>
+<li><p>上传的 .user.ini ⽬录下必须含有 .php ⽂件，⽽⼀般的题⽬当中不会含有。 </p>
+</li>
+<li><p>服务器使⽤CGI／FastCGI模式 </p>
+</li>
+</ul>
+<ol start="7">
+<li>1上传.user.ini⽂件 </li>
+</ol>
+<p> auto_prepend_file=a.jpg //自动在每个页面包含a.jpg文件，如果在php文件中包含jpg文</p>
+<p>件就会导致a.jpg被当成php文件解析</p>
+<ul>
+<li> 特殊⽤法1：⽇志⽂件包含 </li>
+</ul>
+<p> auto_prepend_file =/var/log/nginx/access.log</p>
+<p>7.2上传 .user.ini ⽂件 </p>
+<p>1 auto_prepend_file=/tmp/sess_test //test要记住</p>
+<ul>
+<li><p>利⽤脚本上传⽂件 </p>
+</li>
+<li><p>session.upload_progress.enabled 这个参数在php.ini默认开启，需要⼿ </p>
+<p>动配置offff，如果不是offff，就会在上传的过程中⽣成上传进度的⽂件，他的存储路径可</p>
+<p>以在phpinfo(),中找到 </p>
+<ol start="8">
+<li><h5 id="⽂件上传和⽂件包含结合"><a href="#⽂件上传和⽂件包含结合" class="headerlink" title="⽂件上传和⽂件包含结合:"></a>⽂件上传和⽂件包含结合:</h5></li>
+</ol>
+<p>上传⽂件之后可能访问的时候是通过某⼀个参数访问，这时就应该想到这个参数适⽤做⽂件包含 </p>
+<p>将我们请求的⽂件包含在当前⻚⾯，如果当前⻚⾯是PHP⽂件那么，我们请求的⽂件就会当作  </p>
+<ol start="9">
+<li><h5 id="⼆次渲染-png图⽚⼆次渲染"><a href="#⼆次渲染-png图⽚⼆次渲染" class="headerlink" title="⼆次渲染: png图⽚⼆次渲染:"></a>⼆次渲染: png图⽚⼆次渲染:</h5></li>
+</ol>
+<p>直接在png图⽚的IDTA数据块写⼊⼀句话，避免了被修改:</p>
+<p>⽣成⼀张在IDTA数据块写有 $_GET<a href="$_POST%5B1%5D">0</a> 的⼀句话⽊⻢的png图⽚，上传 </p>
+<p>之后再执⾏ </p>
+<p>具体原理是IDAT数据块放着png图⽚的重要信息，⼀般不会被重新渲染 </p>
+<ul>
+<li>gif 图⽚⼆次渲染: </li>
+</ul>
+<p>使⽤ 010将gif图⽚的最后加上⼀句话，上传之后，将上传之后的图⽚下载下来，再次打开010 </p>
+<p>查看，发现原本我们写⼊的⼀句话已经消失了。 </p>
+<p>但与之前的图⽚进⾏对照，仍有未经渲染（改变）的部分，我们可以讲⼀句话写⼊不会被渲染的 部分进⾏上传即可。 </p>
+<ul>
+<li><p>jpg 图⽚⼆次渲染:</p>
+<p>1.先找⼀张jpg上传，将上传的图⽚进⾏下载，kali运⾏脚本</p>
+<p>2.010打开查看 </p>
+<p>写⼊成功 </p>
+<h5 id="10-条件竞争"><a href="#10-条件竞争" class="headerlink" title="10.条件竞争:"></a>10.条件竞争:</h5><p>⼀些⽹站的逻辑是先允许上传任意⽂件，然后检查上传的⽂件是否包含WebShell脚本，若果包 </p>
+<p>含就会删除⽂件。这⾥存在的问题是⽂件上传成功之后和删除⽂件之间存在⼀个短的时间差(因 </p>
+<p>为要执⾏检查⽂件和删除⽂件的操作)，攻击者就可以利⽤⾜额个时间差完成竞争条件的上传漏 </p>
+<p>洞攻击 </p>
+<p>攻击者写上传WebShell脚本 10.pho，10.php的内容是⽣成⼀个新的WebShell脚本 </p>
+<p>shell.php，10.php的代码如下: </p>
+<?php 
+
+ fputs(fopen('../shell.php','w'),'<?php @eval($_POST[1]);?><p>‘) </p>
+<p> ?&gt; </p>
+<ul>
+<li>当10.php上传成功之后，客户端⽴即访问10.php，则会在上级⽬录下⾃动⽣成 shell.php</li>
+</ul>
+<h5 id="11-upload-lab相关知识"><a href="#11-upload-lab相关知识" class="headerlink" title="11.upload-lab相关知识"></a>11.upload-lab相关知识</h5><ul>
+<li><p>⿊名单没有完全过滤所有后缀名 </p>
+</li>
+<li><p> 构造php::$DATA绕过 windows中会被认为是php⽂件解析 </p>
+</li>
+<li><p>windows系统中 .php. 会⾃动认为是 . </p>
+</li>
+<li><p>⽂件头 </p>
+</li>
+</ul>
+<p>GIF89a(16进制) =47494638 </p>
+<ul>
+<li><p>构造图⽚⻢命令: </p>
+</li>
+<li><p> move_upload_fifile问题(upload-19) </p>
+</li>
+</ul>
+<p>  1 1. move_uploaded_file() 00截断，上传webshell，同时自定义保存名称，直接保存为php</p>
+<p>  是不行的</p>
+<p>  发现 move_uploaded_file() 函数中的 img_path 是由 post 参数 </p>
+<p>  save_name 控制的，因此可以在 save_name 利⽤00截断绕过 </p>
+</li>
+</ul>
+</li>
+</ul>
+<ol start="12">
+<li><h5 id="CTF-常⻅思路"><a href="#CTF-常⻅思路" class="headerlink" title="CTF 常⻅思路"></a>CTF 常⻅思路</h5></li>
+<li><p>找到允许上传的⽂件类型，抓包 </p>
+</li>
+<li><p>在 Content-Type 正确的情况下，⾸先尝试直接更改 后缀为 .php ，写⼊⼀句话⽊⻢ </p>
+</li>
+<li><p>上述不允许的情况下，观察服务器类型，nginx 尝试 .user.ini ，Apache 尝试.htaccess </p>
+</li>
+<li><p>.user.ini 注意该⽬录下是否已经含有 .php ⽂件 </p>
+<p>过滤 php </p>
+<p>⽇志包含：过滤 . Web 162-163</p>
+<p>⼆次渲染 Web 164 165 </p>
+<p>后缀类型不可猜测时，.zip ⽂件上传 Web 166</p>
+<p>免杀 Web 168 </p>
+<p>前端做后缀检测，后端做不同后缀的 Content-Type 检测，注意抓包后修改 Content- </p>
+<p>Type 为⽩名单</p>
+</li>
+</ol>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2022/01/26/web8/" data-id="ckyvjgj970000mwv32bsq7nvw" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-web7" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/2022/01/25/web7/" class="article-date">
@@ -1155,34 +1332,6 @@ call_user_func() ----------把第⼀个参数作为回调函数调⽤ call_user_
 
 
   
-    <article id="post-php4" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2021/10/23/php4/" class="article-date">
-  <time datetime="2021-10-23T04:39:53.336Z" itemprop="datePublished">2021-10-23</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h1 id="php中"><a href="#php中" class="headerlink" title="php中"></a>php中</h1><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">1.函数</span><br><span class="line">（1）性质：可重复执行的代码片段。</span><br><span class="line">例如：$_GET[]函数</span><br><span class="line">作用：传导参数，在hackbar(一个插件)上使用</span><br><span class="line">在地址后加入\?a=(任意值)</span><br><span class="line">$_POST函数</span><br><span class="line">作用：传参，与上面函数一样，不过直接输入地址xxx.php.</span><br><span class="line">PHP strlen() 函数</span><br><span class="line">有时知道字符串值的长度是很有用的。</span><br><span class="line">strlen() 函数返回字符串的长度（字节数）。</span><br><span class="line">2.自定义函数</span><br><span class="line">function +函数名称。</span><br><span class="line">使用时需要再次声明函数。注意：函数外面的值不会影响函数里面的值</span><br><span class="line">&lt;?php</span><br><span class="line">$num2 = 90;</span><br><span class="line">function num($num1=10,$num2=20,$num3=60)&#123;</span><br><span class="line">    echo $num1+$num2+$num3;</span><br><span class="line">&#125;</span><br><span class="line">num();</span><br><span class="line">3.php运算符</span><br><span class="line">与C语言知识一样，注意特殊输出是运算符的位置</span><br><span class="line">如:&#x27;++&#x27;和 &#x27;--&#x27;</span><br><span class="line">PHP7+ 版本新增整除运算符 intdiv()，该函数返回值为第一个参数除于第二个参数的值并取整（向下取整）</span><br><span class="line">&lt;?php</span><br><span class="line">var_dump(intdiv(10, 3));</span><br><span class="line">?&gt;</span><br><span class="line">以上实例会输出：</span><br><span class="line"></span><br><span class="line">int(3)</span><br></pre></td></tr></table></figure>
-
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://example.com/2021/10/23/php4/" data-id="ckyiofugg0003mgv3eju580xa" class="article-share-link">Share</a>
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-  
 
 
   <nav id="page-nav">
@@ -1219,6 +1368,10 @@ call_user_func() ----------把第⼀个参数作为回调函数调⽤ call_user_
       <ul>
         
           <li>
+            <a href="/2022/01/26/web8/">(no title)</a>
+          </li>
+        
+          <li>
             <a href="/2022/01/25/web7/">(no title)</a>
           </li>
         
@@ -1232,10 +1385,6 @@ call_user_func() ----------把第⼀个参数作为回调函数调⽤ call_user_
         
           <li>
             <a href="/2022/01/22/web4/">(no title)</a>
-          </li>
-        
-          <li>
-            <a href="/2022/01/21/web3/">(no title)</a>
           </li>
         
       </ul>
