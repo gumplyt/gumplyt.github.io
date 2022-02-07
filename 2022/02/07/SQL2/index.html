@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+
+  
+  <title>Hexo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="SQL基础知识八、延时注入8.1 手动：结合 Burp Respond当页面上无回显，也没有输出 SQL 语句执行错误信息。正确的 SQL 语句和错误的 SQL 语句返  回页面都一样，可考虑延时注入。  方法： 查库  查表 查列 查字段  8.2 脚本8.3 过滤sleep的盲注:MySQL有一个内置的BENCHMARK()函数，可以测试某些特定操作的执行速度。 参 数可以是需  要执行的次数">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Hexo">
+<meta property="og:url" content="http://example.com/2022/02/07/SQL2/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="SQL基础知识八、延时注入8.1 手动：结合 Burp Respond当页面上无回显，也没有输出 SQL 语句执行错误信息。正确的 SQL 语句和错误的 SQL 语句返  回页面都一样，可考虑延时注入。  方法： 查库  查表 查列 查字段  8.2 脚本8.3 过滤sleep的盲注:MySQL有一个内置的BENCHMARK()函数，可以测试某些特定操作的执行速度。 参 数可以是需  要执行的次数">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2022-02-07T11:37:49.461Z">
+<meta property="article:modified_time" content="2022-02-07T13:03:54.054Z">
+<meta property="article:author" content="John Doe">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Hexo</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://example.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-SQL2" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2022/02/07/SQL2/" class="article-date">
+  <time datetime="2022-02-07T11:37:49.461Z" itemprop="datePublished">2022-02-07</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="SQL基础知识"><a href="#SQL基础知识" class="headerlink" title="SQL基础知识"></a>SQL基础知识</h1><h4 id="八、延时注入"><a href="#八、延时注入" class="headerlink" title="八、延时注入"></a>八、延时注入</h4><h5 id="8-1-手动：结合-Burp-Respond"><a href="#8-1-手动：结合-Burp-Respond" class="headerlink" title="8.1 手动：结合 Burp Respond"></a>8.1 手动：结合 Burp Respond</h5><p>当页面上无回显，也没有输出 SQL 语句执行错误信息。正确的 SQL 语句和错误的 SQL 语句返 </p>
+<p>回页面都一样，可考虑延时注入。 </p>
+<p>方法：</p>
+<p>查库 </p>
+<p>查表</p>
+<p>查列</p>
+<p>查字段 </p>
+<h5 id="8-2-脚本"><a href="#8-2-脚本" class="headerlink" title="8.2 脚本"></a>8.2 脚本</h5><p>8.3 过滤sleep的盲注:MySQL有一个内置的BENCHMARK()函数，可以测试某些特定操作的执行速度。 参 数可以是需 </p>
+<p>要执行的次数和表达式。 表达式可以是任何的标量表达式，比如返回值 是标量的子查询或者函 </p>
+<p>数。 该函数可以很方便地测试某些特定操作的性能，比如通过测试可以发现，MDS()函数比 SHAl()函数要快： </p>
+<h5 id="九、regexp-正则匹配"><a href="#九、regexp-正则匹配" class="headerlink" title="九、regexp 正则匹配"></a>九、regexp 正则匹配</h5><p>有两种方法可以创建一个 <code>RegExp</code> 对象：一种是字面量，另一种是构造函数。</p>
+<ul>
+<li><p>字面量</p>
+<p>由斜杠(/)包围而不是引号包围。</p>
+</li>
+<li><p>构造函数的字符串参数</p>
+<p>由引号而不是斜杠包围。</p>
+</li>
+</ul>
+<p>以下三种表达式都会创建相同的正则表达式：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">/ab+c/i; //字面量形式</span><br><span class="line">new RegExp(&#x27;ab+c&#x27;, &#x27;i&#x27;); // 首个参数为字符串模式的构造函数</span><br><span class="line">new RegExp(/ab+c/, &#x27;i&#x27;); // 首个参数为常规字面量的构造函数</span><br></pre></td></tr></table></figure>
+
+<p>Copy to Clipboard</p>
+<p>当表达式被赋值时，字面量形式提供正则表达式的编译（compilation）状态，当正则表达式保持为常量时使用字面量。例如当你在循环中使用字面量构造一个正则表达式时，正则表达式不会在每一次迭代中都被重新编译（recompiled）。</p>
+<p>而正则表达式对象的构造函数，如 <code>new RegExp(&#39;ab+c&#39;)</code> 提供了正则表达式运行时编译（runtime compilation）。如果你知道正则表达式模式将会改变，或者你事先不知道什么模式，而是从另一个来源获取，如用户输入，这些情况都可以使用构造函数。</p>
+<p>措施：手动或者脚本</p>
+<h5 id="十、异或注入"><a href="#十、异或注入" class="headerlink" title="十、异或注入"></a>十、异或注入</h5><p>异或：一种逻辑运算，简言之，相同为假，不同为真，NULL 与任何条件异或结果都为 NULL， mysql 中的符号是 ^ 和 xor。</p>
+<p>在计算机中异或为一种逻辑运算，两个条件相同即为假（0），两个条件不同即为真（1）。</p>
+<p>异或注入可以判别过滤了哪些字符。</p>
+<p>在MySQL中，异或可以用’^’表示。</p>
+<p>用mysql测试一下：</p>
+<p>原文链接：<a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_37873738/article/details/88043659">https://blog.csdn.net/qq_37873738/article/details/88043659</a></p>
+<p>?id=1’^(length(‘union’)&gt;0)# </p>
+<p>如果 union 已被过滤，那么得到的将会是 length(0&gt;0) ，显然是不成立的，那就将会是 </p>
+<p>1’^0 ，得到的为 真，所以将会返回 正常 的页面； </p>
+<p>如果 union 没有被过滤，相反的，将会得到为假的异或，返回的将会是 错误 的页面。 </p>
+<p>由此可以判断某些字符的过滤情况。 </p>
+<p>符号特点： </p>
+<ul>
+<li><p>运算符会做位异或运算</p>
+</li>
+<li><p>xor 做逻辑运算 1 xor 0 会输出 1 ，其它情况输出其余所有数据 </p>
+</li>
+</ul>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2022/02/07/SQL2/" data-id="ckzcpi8ou000064v3e3yia8e7" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="/2022/02/06/SQL1/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title"></div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+
+  
+    
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/02/">February 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/01/">January 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/12/">December 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/10/">October 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/09/">September 2021</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2022/02/07/SQL2/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2022/02/06/SQL1/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2022/01/28/SQL/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2022/01/26/web8/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2022/01/25/web7/">(no title)</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2022 John Doe<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+
+  
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+  </div>
+</body>
+</html>

